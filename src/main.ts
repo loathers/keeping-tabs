@@ -41,6 +41,9 @@ const actions: {
   },
   kmail: (options: string[]) => {
     const items: Item[] = [];
+    if (options.length === 0) {
+      throw "You must specify a User # to Kmail!";
+    }
     return {
       action: (item: Item) => items.push(item),
       finalize: () => {
