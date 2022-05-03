@@ -1,14 +1,14 @@
 {
-  "name": "kol-js-starter",
+  "name": "keeping-tabs",
   "version": "1.0.0",
-  "description": "Example package for KoLmafia TypeScript scripts.",
-  "main": "KoLmafia/scripts/kol-js-starter/main-script-name.js",
+  "description": "An inventory management for Kingdom of Loathing",
+  "main": "KoLmafia/scripts/keeping-tabs/keeping-tabs.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run build:types && yarn run build:js",
     "build:types": "tsc",
     "build:js": "webpack",
     "lint": "eslint src && prettier --check .",
+    "lint:fix": "eslint src --fix && prettier --check --write .",
     "watch": "webpack --watch --progress"
   },
   "devDependencies": {
@@ -31,14 +31,14 @@
   },
   "dependencies": {
     "core-js": "^3.16.4",
-    "kolmafia": ">=1.2.0",
-    "libram": ">=0.3.0"
+    "kolmafia": "^2.1.1",
+    "libram": "^0.6.11"
   },
-  "author": "Captain Scotch",
+  "author": "ReverKiller",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/docrostov/kol-js-starter.git"
+    "url": "git+https://github.com:pstalcup/keeping-tabs.git"
   },
   "keywords": [
     "KoLMafia",
@@ -46,7 +46,7 @@
     "TS"
   ],
   "bugs": {
-    "url": "https://github.com/docrostov/kol-js-starter/issues"
+    "url": "https://https://github.com/pstalcup/keeping-tabs/issues"
   },
-  "homepage": "https://github.com/docrostov/kol-js-starter#readme"
+  "homepage": "https://github.com/pstalcup/keeping-tabs"
 }
