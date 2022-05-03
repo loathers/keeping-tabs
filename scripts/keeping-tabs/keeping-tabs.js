@@ -2133,7 +2133,6 @@ function favoriteTabs() {
   while ((match = regexp.exec(inventory)) !== null) {
     var title = match[2];
     var _options = match[3];
-    (0,external_kolmafia_namespaceObject.print)("".concat(title, " ").concat(_options, " (").concat(match[1], ")"));
 
     if (isTabTitle(title)) {
       tabs.push({
