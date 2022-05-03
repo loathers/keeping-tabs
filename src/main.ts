@@ -1,45 +1,59 @@
 import {
   autosell,
-  cliExecute,
-  getShop,
   Item,
   itemAmount,
   print,
   putDisplay,
   putShop,
-  repriceShop,
-  shopPrice,
   toInt,
   toItem,
   use,
   visitUrl,
 } from "kolmafia";
-import { $item } from "libram";
+import { Kmail } from "libram";
 
-type TabTitle = "mall this" | "display this" | "use this" | "autosell this";
+const ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail"] as const;
+type TabTitleTuple = typeof ALL_TAB_TITLES;
+type TabTitle = TabTitleTuple[number];
+type TabId = number;
 
-const tabLookup: { [Title in TabTitle]: number } = {
-  "mall this": 2,
-  "display this": 3,
-  "use this": 4,
-  "autosell this": 5,
+function isTabTitle(value: string): value is TabTitle {
+  return ALL_TAB_TITLES.includes(value as TabTitle);
+}
+
+const actions: {
+  [T in TabTitle]: (options: string[]) => {
+    action: (item: Item) => void;
+    finalize?: () => void;
+  };
+} = {
+  mall: (_options: string[]) => {
+    return { action: (item: Item) => putShop(0, 0, item) };
+  },
+  display: (_options: string[]) => {
+    return { action: (item: Item) => putDisplay(itemAmount(item), item) };
+  },
+  use: (_options: string[]) => {
+    return { action: (item: Item) => use(itemAmount(item), item) };
+  },
+  autosell: (_options: string[]) => {
+    return { action: (item: Item) => autosell(itemAmount(item), item) };
+  },
+  kmail: (options: string[]) => {
+    const items: Item[] = [];
+    return {
+      action: (item: Item) => items.push(item),
+      finalize: () => Kmail.send(options[0], "", items),
+    };
+  },
 };
 
-const actions: { [Title in TabTitle]: (item: Item) => void } = {
-  "mall this": (item: Item) => putShop(0, 0, item),
-  "display this": (item: Item) => putDisplay(itemAmount(item), item),
-  "use this": (item: Item) => use(itemAmount(item), item),
-  "autosell this": (item: Item) => autosell(itemAmount(item), item),
-};
-
-function getItemsInTab(title: TabTitle): Item[] {
-  print(`Matching tab ${title}`);
-  const tab = visitUrl(`inventory.php?which=f${tabLookup[title]}`);
+function items(tabId: TabId): Item[] {
+  const tab = visitUrl(`inventory.php?which=f${tabId}`);
   const regexp = /ic(\d+)/g;
-
-  let match;
   const items: Item[] = [];
 
+  let match;
   while ((match = regexp.exec(tab)) !== null) {
     const item = toItem(toInt(match[1]));
     items.push(item);
@@ -47,38 +61,40 @@ function getItemsInTab(title: TabTitle): Item[] {
   return items;
 }
 
-const fixedPrices = new Map<Item, number>([[$item`pocket wish`, 49995]]);
+function favoriteTabs(): { title: TabTitle; id: TabId; options: string[] }[] {
+  // visit the consumables tab to ensure that you get clickable links for
+  // all favorite tabs
+  const inventory = visitUrl(`inventory.php?which=1`);
+  const regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&]+)?<\/a>/g;
+  const tabs: { title: TabTitle; id: TabId; options: string[] }[] = [];
 
-function shopItems(): Item[] {
-  return Object.keys(getShop()).map((itemStr) => toItem(itemStr));
-}
-
-export function main(args = "use mall autosell display"): void {
-  const commandLookup = new Map<string, TabTitle>([
-    ["mall", "mall this"],
-    ["display", "display this"],
-    ["use", "use this"],
-    ["autosell", "autosell this"],
-  ]);
-  const commands = args.split(" ").map((command) => commandLookup.get(command));
-  for (const command of commands) {
-    if (command) {
-      print(`Executing ${command}`, "yellow");
-      getItemsInTab(command).forEach(actions[command]);
+  let match;
+  while ((match = regexp.exec(inventory)) !== null) {
+    const title = match[2];
+    const options = match[3];
+    print(`${match[1]} ${match[2]} ${match[3]}`);
+    if (isTabTitle(title)) {
+      tabs.push({
+        title,
+        id: parseInt(match[1]),
+        options: (options ?? ":").substring(1).split(","),
+      });
     }
   }
-  if (commands.includes("mall this")) {
-    shopItems().forEach((item) => {
-      const fixedPrice = fixedPrices.get(item);
-      if (fixedPrice) {
-        repriceShop(fixedPrice, item);
+
+  return tabs;
+}
+
+export function main(args = "use mall autosell display kmail"): void {
+  const tabs = favoriteTabs();
+  const commands: TabTitle[] = args.split(" ").filter(isTabTitle);
+  for (const command of commands) {
+    for (const tab of tabs) {
+      if (tab.title === command) {
+        const tabForOptions = actions[tab.title](tab.options);
+        items(tab.id).map(tabForOptions.action);
+        tabForOptions.finalize?.();
       }
-    });
-    cliExecute("reprice");
-    const maxPriceItems = shopItems().filter((i) => shopPrice(i) === 999999999);
-    if (maxPriceItems.length > 0) {
-      print("Some Items are Still at Max Price", "red");
-      maxPriceItems.forEach((i) => print(`* ${i}`, "red"));
     }
   }
 }

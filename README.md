@@ -7,6 +7,7 @@ This is a script to manage your inventory for the KoLMafia client for the web br
 Using the native KoL interface, create native tabs to match the specific actions that you want to complete.
 
 Current supported actions are:
+
 * `mall`
   * This will add the item to your mall store
 * `autosell`
