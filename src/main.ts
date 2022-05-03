@@ -43,7 +43,10 @@ const actions: {
     const items: Item[] = [];
     return {
       action: (item: Item) => items.push(item),
-      finalize: () => Kmail.send(options[0], "", items),
+      finalize: () => {
+        const itemQuantities = new Map<Item, number>(items.map((i) => [i, itemAmount(i)]));
+        Kmail.send(options[0], "", itemQuantities);
+      },
     };
   },
 };
