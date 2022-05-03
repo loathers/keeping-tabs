@@ -25,30 +25,36 @@ When naming a tab, you specify what to do with all items in that tab by naming t
 
 * `mall`
   * This will add the item to your mall store
-  * No options are supported
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
 * `autosell`
   * This will autosell the item
-  * No options are supported
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
+* `sell`
+  * This will either autosell the item or add it to your mall store. It will add it to your mall store only if there are less than 1000 stocked at autosell price
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
 * `use`
   * This will use the item
-  * No options are supported
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
 * `display`
   * This will add the item to your display case
-  * No options are supported
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
 * `kmail:user#`
   * This will Kmail all of the items in this tab to the user
-  * The only supported option is the User# of the player you want to Kmail the item to, and it will error if it is unspecified
+  * Supports "target", by specifiying "\#playernumber" (this is the default option if no other options are specified, without the #)
+  * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
+
   
-After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line.
+After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
 
 You can also specify which group of actions you want run, and which order you'd like to run them in, for example `keeping-tabs use mall kmail` would, in order, use items in the `use` tab, add all items in the `mall` tab to your mall store, and kmail all items specified in any kmail tabs to the matching users
 
 ## TODO
 
-* [ ] Add more mall options (add at fixed price, add at min price, etc.)
+* [ ] Add more mall options (add at fixed price, add at min price, limit the items for sale)
 * [ ] Add confirmation for kmailing, optionally?
-* [ ] Add option to keep certain number of items (using format of N)
+* [x] Add option to keep certain number of items (using format of keepN)
 * [ ] Add `pull` to pull specific items from Hagnks
 * [ ] Add `closet`to add specfic things to your closet
+* [ ] Add `uncloset` option to run the tab again a second time, this time on your closet
 * [ ] Add options to run a tab on a specific day of the week (maybe `monday` which only runs the tab on Mondays)
 * [ ] Add `trade` to set up trade request with someone
