@@ -2,7 +2,6 @@ import {
   autosell,
   Item,
   itemAmount,
-  print,
   putDisplay,
   putShop,
   toInt,
@@ -78,7 +77,6 @@ function favoriteTabs(): { title: TabTitle; id: TabId; options: string[] }[] {
   while ((match = regexp.exec(inventory)) !== null) {
     const title = match[2];
     const options = match[3];
-    print(`${match[1]} ${match[2]} ${match[3]}`);
     if (isTabTitle(title)) {
       tabs.push({
         title,

@@ -33,3 +33,12 @@ Current supported actions are:
 After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line.
 
 You can also specify which group of actions you want run, and which order you'd like to run them in, for example `keeping-tabs use mall kmail` would, in order, use items in the `use` tab, add all items in the `mall` tab to your mall store, and kmail all items specified in any kmail tabs to the matching users
+
+## TODO
+
+[ ] Add more mall options (add at fixed price, add at min price, etc.)
+[ ] Add confirmation for kmailing, optionally? 
+[ ] Add option to keep certain number of items (using format of N)
+[ ] Add `pull` to pull specific items from Hagnks
+[ ] Add `closet`to add specfic things to your closet
+[ ] Add options to run a tab on a specific day of the week (maybe `monday` which only runs the tab on Mondays)
