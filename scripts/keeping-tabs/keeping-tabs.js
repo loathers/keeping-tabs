@@ -1992,52 +1992,123 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 
 
 
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail"];
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "pull"];
 
 function isTabTitle(value) {
   return ALL_TAB_TITLES.includes(value);
 }
 
+var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "target"]));
+
+function parseOptions(optionsStr) {
+  var options = {};
+
+  var _iterator = main_createForOfIteratorHelper(optionsStr),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var optionStr = _step.value;
+      var keep = optionStr.match(/keep(\d+)/);
+
+      if (keep && keep[1]) {
+        options.keep = parseInt(keep[1]);
+        continue;
+      }
+
+      var target = optionStr.match(/#(.*)/);
+
+      if (target && target[1]) {
+        options.target = target[1];
+        continue;
+      }
+
+      var limit = optionStr.match(/limit(\d+)/);
+
+      if (limit && limit[1]) {
+        options.limit = parseInt(limit[1]);
+      }
+
+      options.default = optionStr;
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return options;
+}
+
+function amount(item, options) {
+  if (options.keep) {
+    return Math.max(0, (0,external_kolmafia_namespaceObject.itemAmount)(item) - options.keep);
+  } else {
+    return (0,external_kolmafia_namespaceObject.itemAmount)(item);
+  }
+}
+
 var actions = {
-  mall: _options => {
+  mall: options => {
     return {
-      action: item => (0,external_kolmafia_namespaceObject.putShop)(0, 0, item)
+      action: item => (0,external_kolmafia_namespaceObject.putShop)(0, 0, amount(item, options), item)
     };
   },
-  display: _options => {
+  sell: options => {
     return {
-      action: item => (0,external_kolmafia_namespaceObject.putDisplay)((0,external_kolmafia_namespaceObject.itemAmount)(item), item)
+      action: item => {
+        if ((0,external_kolmafia_namespaceObject.wellStocked)("".concat(item), 1000, Math.min(100, (0,external_kolmafia_namespaceObject.autosellPrice)(item) * 2))) {
+          (0,external_kolmafia_namespaceObject.autosell)(amount(item, options), item);
+        } else {
+          (0,external_kolmafia_namespaceObject.putShop)(0, 0, amount(item, options), item);
+        }
+      }
     };
   },
-  use: _options => {
+  display: options => {
     return {
-      action: item => (0,external_kolmafia_namespaceObject.use)((0,external_kolmafia_namespaceObject.itemAmount)(item), item)
+      action: item => (0,external_kolmafia_namespaceObject.putDisplay)(amount(item, options), item)
     };
   },
-  autosell: _options => {
+  use: options => {
     return {
-      action: item => (0,external_kolmafia_namespaceObject.autosell)((0,external_kolmafia_namespaceObject.itemAmount)(item), item)
+      action: item => (0,external_kolmafia_namespaceObject.use)(amount(item, options), item)
+    };
+  },
+  autosell: options => {
+    return {
+      action: item => (0,external_kolmafia_namespaceObject.autosell)(amount(item, options), item)
     };
   },
   kmail: options => {
     var items = [];
-
-    if (options.length === 0) {
-      throw "You must specify a User # to Kmail!";
-    }
-
     return {
       action: item => items.push(item),
       finalize: () => {
-        var itemQuantities = new Map(items.map(i => [i, (0,external_kolmafia_namespaceObject.itemAmount)(i)]));
-        Kmail.send(options[0], "", itemQuantities);
+        var _options$target;
+
+        var target = (_options$target = options.target) !== null && _options$target !== void 0 ? _options$target : options.default;
+
+        if (!target) {
+          throw "You must specify a User # to Kmail!";
+        }
+
+        var itemQuantities = new Map(items.map(i => [i, amount(i, options)]));
+        Kmail.send(target, "", itemQuantities);
       }
+    };
+  },
+  pull: options => {
+    var items = [];
+    return {
+      action: item => items.push(item),
+      finalize: () => (0,external_kolmafia_namespaceObject.cliExecute)("hagnk ".concat(items.join(",")))
     };
   }
 };
 
-function items(tabId) {
-  var tab = (0,external_kolmafia_namespaceObject.visitUrl)("inventory.php?which=f".concat(tabId));
+function items(tabId, type) {
+  var tab = (0,external_kolmafia_namespaceObject.visitUrl)("".concat(type, ".php?which=f").concat(tabId));
   var regexp = /ic(\d+)/g;
   var items = [];
   var match;
@@ -2055,19 +2126,21 @@ function favoriteTabs() {
   // visit the consumables tab to ensure that you get clickable links for
   // all favorite tabs
   var inventory = (0,external_kolmafia_namespaceObject.visitUrl)("inventory.php?which=1");
-  var regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&]+)?<\/a>/g;
+  var regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,]+)?<\/a>/g;
   var tabs = [];
   var match;
 
   while ((match = regexp.exec(inventory)) !== null) {
     var title = match[2];
-    var _options2 = match[3];
+    var _options = match[3];
+    (0,external_kolmafia_namespaceObject.print)("".concat(title, " ").concat(_options, " (").concat(match[1], ")"));
 
     if (isTabTitle(title)) {
       tabs.push({
         title: title,
         id: parseInt(match[1]),
-        options: (_options2 !== null && _options2 !== void 0 ? _options2 : ":").substring(1).split(",")
+        options: (_options !== null && _options !== void 0 ? _options : ":").substring(1).split(","),
+        type: title === "pull" ? "hagnk" : "inventory"
       });
     }
   }
@@ -2080,38 +2153,38 @@ function main() {
   var tabs = favoriteTabs();
   var commands = args.split(" ").filter(isTabTitle);
 
-  var _iterator = main_createForOfIteratorHelper(commands),
-      _step;
+  var _iterator2 = main_createForOfIteratorHelper(commands),
+      _step2;
 
   try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var command = _step.value;
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var command = _step2.value;
 
-      var _iterator2 = main_createForOfIteratorHelper(tabs),
-          _step2;
+      var _iterator3 = main_createForOfIteratorHelper(tabs),
+          _step3;
 
       try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var tab = _step2.value;
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var tab = _step3.value;
 
           if (tab.title === command) {
             var _tabForOptions$finali;
 
-            var tabForOptions = actions[tab.title](tab.options);
-            items(tab.id).map(tabForOptions.action);
+            var tabForOptions = actions[tab.title](parseOptions(tab.options));
+            items(tab.id, tab.type).map(tabForOptions.action);
             (_tabForOptions$finali = tabForOptions.finalize) === null || _tabForOptions$finali === void 0 ? void 0 : _tabForOptions$finali.call(tabForOptions);
           }
         }
       } catch (err) {
-        _iterator2.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator2.f();
+        _iterator3.f();
       }
     }
   } catch (err) {
-    _iterator.e(err);
+    _iterator2.e(err);
   } finally {
-    _iterator.f();
+    _iterator2.f();
   }
 }
 })();
