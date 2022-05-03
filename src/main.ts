@@ -4,8 +4,6 @@ import {
   cliExecute,
   Item,
   itemAmount,
-  mallPrice,
-  print,
   putDisplay,
   putShop,
   toInt,
@@ -146,7 +144,6 @@ function favoriteTabs(): { title: TabTitle; id: TabId; type: InventoryType; opti
   while ((match = regexp.exec(inventory)) !== null) {
     const title = match[2];
     const options = match[3];
-    print(`${title} ${options} (${match[1]})`);
     if (isTabTitle(title)) {
       tabs.push({
         title,
