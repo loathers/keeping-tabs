@@ -1983,6 +1983,141 @@ var Kmail = /*#__PURE__*/function () {
 }();
 
 
+;// CONCATENATED MODULE: ./src/types.ts
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel"];
+function isTabTitle(value) {
+  return ALL_TAB_TITLES.includes(value);
+}
+var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "target"]));
+function isActionOption(value) {
+  return ALL_ACTION_OPTIONS.includes(value);
+}
+;// CONCATENATED MODULE: ./src/options.ts
+function options_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = options_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function options_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return options_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return options_arrayLikeToArray(o, minLen); }
+
+function options_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function options_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function options_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function options_createClass(Constructor, protoProps, staticProps) { if (protoProps) options_defineProperties(Constructor.prototype, protoProps); if (staticProps) options_defineProperties(Constructor, staticProps); return Constructor; }
+
+function options_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Options = /*#__PURE__*/function () {
+  function Options() {
+    options_classCallCheck(this, Options);
+
+    options_defineProperty(this, "keep", void 0);
+
+    options_defineProperty(this, "target", void 0);
+
+    options_defineProperty(this, "body", void 0);
+
+    options_defineProperty(this, "priceUpperThreshold", void 0);
+
+    options_defineProperty(this, "priceLowerThreshold", void 0);
+
+    options_defineProperty(this, "default", void 0);
+  }
+
+  options_createClass(Options, [{
+    key: "toString",
+    value: function toString() {
+      var optionsStr = [];
+
+      if (this.keep) {
+        optionsStr.push("keep: ".concat(this.keep));
+      }
+
+      if (this.target) {
+        optionsStr.push("target: ".concat(this.target));
+      }
+
+      if (this.body) {
+        optionsStr.push("body: ".concat(this.body));
+      }
+
+      if (this.priceUpperThreshold) {
+        optionsStr.push("price upper threshold: ".concat(this.priceUpperThreshold));
+      }
+
+      if (this.priceLowerThreshold) {
+        optionsStr.push("price lower threshold: ".concat(this.priceLowerThreshold));
+      }
+
+      return optionsStr.join(";");
+    }
+  }, {
+    key: "empty",
+    value: function empty() {
+      return this.toString() === "";
+    }
+  }], [{
+    key: "parse",
+    value: function parse(optionsStr) {
+      var options = new Options();
+
+      var _iterator = options_createForOfIteratorHelper(optionsStr),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var optionStr = _step.value;
+          var keep = optionStr.match(/keep(\d+)/);
+
+          if (keep && keep[1]) {
+            options.keep = parseInt(keep[1]);
+            continue;
+          }
+
+          var target = optionStr.match(/#(.*)/);
+
+          if (target && target[1]) {
+            options.target = target[1];
+            continue;
+          }
+
+          var upperThreshold = optionStr.match(/<(\d+)/);
+
+          if (upperThreshold && upperThreshold[1]) {
+            options.priceUpperThreshold = parseInt(upperThreshold[1]);
+            continue;
+          }
+
+          var lowerThreshold = optionStr.match(/>(\d+)/);
+
+          if (lowerThreshold && lowerThreshold[1]) {
+            options.priceUpperThreshold = parseInt(lowerThreshold[1]);
+            continue;
+          }
+
+          var body = optionStr.match(/body=(.*)/);
+
+          if (body && body[1]) {
+            options.body = body[1];
+            continue;
+          }
+
+          if (optionStr.length > 0) {
+            throw "Unsupported Option: ".concat(optionStr);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      return options;
+    }
+  }]);
+
+  return Options;
+}();
 ;// CONCATENATED MODULE: ./src/main.ts
 function main_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = main_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
@@ -1992,53 +2127,9 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 
 
 
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "pull"];
 
-function isTabTitle(value) {
-  return ALL_TAB_TITLES.includes(value);
-}
 
-var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "target"]));
-
-function parseOptions(optionsStr) {
-  var options = {};
-
-  var _iterator = main_createForOfIteratorHelper(optionsStr),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var optionStr = _step.value;
-      var keep = optionStr.match(/keep(\d+)/);
-
-      if (keep && keep[1]) {
-        options.keep = parseInt(keep[1]);
-        continue;
-      }
-
-      var target = optionStr.match(/#(.*)/);
-
-      if (target && target[1]) {
-        options.target = target[1];
-        continue;
-      }
-
-      var limit = optionStr.match(/limit(\d+)/);
-
-      if (limit && limit[1]) {
-        options.limit = parseInt(limit[1]);
-      }
-
-      options.default = optionStr;
-    }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
-  }
-
-  return options;
-}
+var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
 
 function amount(item, options) {
   if (options.keep) {
@@ -2046,6 +2137,18 @@ function amount(item, options) {
   } else {
     return (0,external_kolmafia_namespaceObject.itemAmount)(item);
   }
+}
+
+function filters(options) {
+  if (options.priceUpperThreshold && options.priceLowerThreshold) {
+    var between = (x, lower, upper) => lower < x && x < upper;
+
+    var upperThreshold = options.priceUpperThreshold;
+    var lowerThreshold = options.priceLowerThreshold;
+    return item => between((0,external_kolmafia_namespaceObject.mallPrice)(item), lowerThreshold, upperThreshold);
+  }
+
+  return item => true;
 }
 
 var actions = {
@@ -2085,7 +2188,7 @@ var actions = {
     return {
       action: item => items.push(item),
       finalize: () => {
-        var _options$target;
+        var _options$target, _options$body;
 
         var target = (_options$target = options.target) !== null && _options$target !== void 0 ? _options$target : options.default;
 
@@ -2094,15 +2197,19 @@ var actions = {
         }
 
         var itemQuantities = new Map(items.map(i => [i, amount(i, options)]));
-        Kmail.send(target, "", itemQuantities);
+        (0,external_kolmafia_namespaceObject.print)("Sending Kmail to ".concat(target));
+        Kmail.send(target, (_options$body = options.body) !== null && _options$body !== void 0 ? _options$body : "", itemQuantities);
       }
     };
   },
-  pull: options => {
-    var items = [];
+  closet: options => {
     return {
-      action: item => items.push(item),
-      finalize: () => (0,external_kolmafia_namespaceObject.cliExecute)("hagnk ".concat(items.join(",")))
+      action: item => (0,external_kolmafia_namespaceObject.putCloset)(amount(item, options), item)
+    };
+  },
+  fuel: options => {
+    return {
+      action: item => (0,external_kolmafia_namespaceObject.cliExecute)("asdonmartin fuel ".concat(amount(item, options), " ").concat(item))
     };
   }
 };
@@ -2126,7 +2233,7 @@ function favoriteTabs() {
   // visit the consumables tab to ensure that you get clickable links for
   // all favorite tabs
   var inventory = (0,external_kolmafia_namespaceObject.visitUrl)("inventory.php?which=1");
-  var regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,]+)?<\/a>/g;
+  var regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
   var tabs = [];
   var match;
 
@@ -2139,7 +2246,7 @@ function favoriteTabs() {
         title: title,
         id: parseInt(match[1]),
         options: (_options !== null && _options !== void 0 ? _options : ":").substring(1).split(","),
-        type: title === "pull" ? "hagnk" : "inventory"
+        type: "inventory"
       });
     }
   }
@@ -2148,42 +2255,51 @@ function favoriteTabs() {
 }
 
 function main() {
-  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "use mall autosell display kmail";
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "closet use mall autosell display kmail fuel";
   var tabs = favoriteTabs();
   var commands = args.split(" ").filter(isTabTitle);
 
-  var _iterator2 = main_createForOfIteratorHelper(commands),
-      _step2;
+  var _iterator = main_createForOfIteratorHelper(commands),
+      _step;
 
   try {
-    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-      var command = _step2.value;
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var command = _step.value;
 
-      var _iterator3 = main_createForOfIteratorHelper(tabs),
-          _step3;
+      var _iterator2 = main_createForOfIteratorHelper(tabs),
+          _step2;
 
       try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var tab = _step3.value;
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var tab = _step2.value;
 
           if (tab.title === command) {
             var _tabForOptions$finali;
 
-            var tabForOptions = actions[tab.title](parseOptions(tab.options));
-            items(tab.id, tab.type).map(tabForOptions.action);
+            var _options2 = Options.parse(tab.options);
+
+            var tabForOptions = actions[tab.title](_options2);
+
+            if (_options2.empty()) {
+              (0,external_kolmafia_namespaceObject.print)("Running ".concat(tab.title), HIGHLIGHT);
+            } else {
+              (0,external_kolmafia_namespaceObject.print)("Running ".concat(tab.title, " with ").concat(_options2), HIGHLIGHT);
+            }
+
+            items(tab.id, tab.type).filter(filters(_options2)).map(tabForOptions.action);
             (_tabForOptions$finali = tabForOptions.finalize) === null || _tabForOptions$finali === void 0 ? void 0 : _tabForOptions$finali.call(tabForOptions);
           }
         }
       } catch (err) {
-        _iterator3.e(err);
+        _iterator2.e(err);
       } finally {
-        _iterator3.f();
+        _iterator2.f();
       }
     }
   } catch (err) {
-    _iterator2.e(err);
+    _iterator.e(err);
   } finally {
-    _iterator2.f();
+    _iterator.f();
   }
 }
 })();
