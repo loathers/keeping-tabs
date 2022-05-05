@@ -2,8 +2,12 @@ import {
   autosell,
   autosellPrice,
   cliExecute,
+  isDarkMode,
   Item,
   itemAmount,
+  mallPrice,
+  print,
+  putCloset,
   putDisplay,
   putShop,
   toInt,
@@ -13,51 +17,10 @@ import {
   wellStocked,
 } from "kolmafia";
 import { Kmail } from "libram";
+import { InventoryType, isTabTitle, TabId, TabTitle } from "./types";
+import { Options } from "./options";
 
-type InventoryType = "inventory" | "hagnk" | "closet";
-
-const ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "pull"] as const;
-type TabTitleTuple = typeof ALL_TAB_TITLES;
-type TabTitle = TabTitleTuple[number];
-type TabId = number;
-
-function isTabTitle(value: string): value is TabTitle {
-  return ALL_TAB_TITLES.includes(value as TabTitle);
-}
-
-const ALL_ACTION_OPTIONS = ["keep", "target"] as const;
-type ActionOptionTuple = typeof ALL_ACTION_OPTIONS;
-type ActionOption = ActionOptionTuple[number];
-
-type Options = {
-  keep?: number;
-  target?: string;
-  default?: string;
-  limit?: number;
-};
-
-function parseOptions(optionsStr: string[]): Options {
-  const options: Options = {};
-
-  for (const optionStr of optionsStr) {
-    const keep = optionStr.match(/keep(\d+)/);
-    if (keep && keep[1]) {
-      options.keep = parseInt(keep[1]);
-      continue;
-    }
-    const target = optionStr.match(/#(.*)/);
-    if (target && target[1]) {
-      options.target = target[1];
-      continue;
-    }
-    const limit = optionStr.match(/limit(\d+)/);
-    if (limit && limit[1]) {
-      options.limit = parseInt(limit[1]);
-    }
-    options.default = optionStr;
-  }
-  return options;
-}
+const HIGHLIGHT = isDarkMode() ? "yellow" : "blue";
 
 function amount(item: Item, options: Options) {
   if (options.keep) {
@@ -65,6 +28,16 @@ function amount(item: Item, options: Options) {
   } else {
     return itemAmount(item);
   }
+}
+
+function filters(options: Options): (item: Item) => boolean {
+  if (options.priceUpperThreshold && options.priceLowerThreshold) {
+    const between = (x: number, lower: number, upper: number) => lower < x && x < upper;
+    const upperThreshold = options.priceUpperThreshold;
+    const lowerThreshold = options.priceLowerThreshold;
+    return (item: Item) => between(mallPrice(item), lowerThreshold, upperThreshold);
+  }
+  return (item: Item) => true;
 }
 
 const actions: {
@@ -106,15 +79,19 @@ const actions: {
           throw "You must specify a User # to Kmail!";
         }
         const itemQuantities = new Map<Item, number>(items.map((i) => [i, amount(i, options)]));
-        Kmail.send(target, "", itemQuantities);
+        print(`Sending Kmail to ${target}`);
+        Kmail.send(target, options.body ?? "", itemQuantities);
       },
     };
   },
-  pull: (options: Options) => {
-    const items: Item[] = [];
+  closet: (options: Options) => {
     return {
-      action: (item: Item) => items.push(item),
-      finalize: () => cliExecute(`hagnk ${items.join(",")}`),
+      action: (item: Item) => putCloset(amount(item, options), item),
+    };
+  },
+  fuel: (options: Options) => {
+    return {
+      action: (item: Item) => cliExecute(`asdonmartin fuel ${amount(item, options)} ${item}`),
     };
   },
 };
@@ -137,7 +114,7 @@ function favoriteTabs(): { title: TabTitle; id: TabId; type: InventoryType; opti
   // all favorite tabs
   const inventory = visitUrl(`inventory.php?which=1`);
   const regexp =
-    /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,]+)?<\/a>/g;
+    /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
   const tabs: { title: TabTitle; id: TabId; type: InventoryType; options: string[] }[] = [];
 
   let match;
@@ -149,7 +126,7 @@ function favoriteTabs(): { title: TabTitle; id: TabId; type: InventoryType; opti
         title,
         id: parseInt(match[1]),
         options: (options ?? ":").substring(1).split(","),
-        type: title === "pull" ? "hagnk" : "inventory",
+        type: "inventory",
       });
     }
   }
@@ -157,14 +134,22 @@ function favoriteTabs(): { title: TabTitle; id: TabId; type: InventoryType; opti
   return tabs;
 }
 
-export function main(args = "use mall autosell display kmail"): void {
+export function main(args = "closet use mall autosell display kmail fuel"): void {
   const tabs = favoriteTabs();
   const commands: TabTitle[] = args.split(" ").filter(isTabTitle);
   for (const command of commands) {
     for (const tab of tabs) {
       if (tab.title === command) {
-        const tabForOptions = actions[tab.title](parseOptions(tab.options));
-        items(tab.id, tab.type).map(tabForOptions.action);
+        const options = Options.parse(tab.options);
+        const tabForOptions = actions[tab.title](options);
+
+        if (options.empty()) {
+          print(`Running ${tab.title}`, HIGHLIGHT);
+        } else {
+          print(`Running ${tab.title} with ${options}`, HIGHLIGHT);
+        }
+
+        items(tab.id, tab.type).filter(filters(options)).map(tabForOptions.action);
         tabForOptions.finalize?.();
       }
     }

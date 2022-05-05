@@ -15,9 +15,9 @@ Using the native KoL interface, create native tabs to match the specific actions
 ## Enabling "favorites"
 
 In order to use this script, you must enable favorites. This can be found by going to the `Options` button in KoL, then clicking the `Inventory` Submenu.
-Under the heading "Right Click", there is a checkbox that says "Add to Favorites (inventory only)". Clicking this check box adds an option when right clicking an item in your inventory. 
+Under the heading "Right Click", there is a checkbox that says "Add to Favorites (inventory only)". Clicking this check box adds an option when right clicking an item in your inventory.
 
-Now you can add "favorites" tabs by going to your inventory and clicking "\[+\]" next to "\[recent items\]". After creating the tab, if you need to change its name you can click on the tab and click "rename". 
+Now you can add "favorites" tabs by going to your inventory and clicking "\[+\]" next to "\[recent items\]". After creating the tab, if you need to change its name you can click on the tab and click "rename".
 
 ## Actions
 
@@ -43,7 +43,6 @@ When naming a tab, you specify what to do with all items in that tab by naming t
   * Supports "target", by specifiying "\#playernumber" (this is the default option if no other options are specified, without the #)
   * Supports "keep", by specifying "keepN", where N is a positive number of items to retain
 
-  
 After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
 
 You can also specify which group of actions you want run, and which order you'd like to run them in, for example `keeping-tabs use mall kmail` would, in order, use items in the `use` tab, add all items in the `mall` tab to your mall store, and kmail all items specified in any kmail tabs to the matching users
