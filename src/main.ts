@@ -61,7 +61,12 @@ const actions: {
     };
   },
   display: (options: Options) => {
-    return { action: (item: Item) => putDisplay(amount(item, options), item) };
+    return {
+      action: (item: Item) => {
+        print(`${item}: ${amount(item, options)}`);
+        putDisplay(amount(item, options), item);
+      },
+    };
   },
   use: (options: Options) => {
     return { action: (item: Item) => use(amount(item, options), item) };
@@ -135,6 +140,7 @@ function favoriteTabs(): { title: TabTitle; id: TabId; type: InventoryType; opti
 }
 
 export function main(args = "closet use mall autosell display kmail fuel"): void {
+  cliExecute("refresh inventory");
   const tabs = favoriteTabs();
   const commands: TabTitle[] = args.split(" ").filter(isTabTitle);
   for (const command of commands) {
