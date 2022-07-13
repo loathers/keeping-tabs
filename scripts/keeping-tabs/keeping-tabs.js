@@ -2170,10 +2170,7 @@ var actions = {
   },
   display: options => {
     return {
-      action: item => {
-        (0,external_kolmafia_namespaceObject.print)("".concat(item, ": ").concat(amount(item, options)));
-        (0,external_kolmafia_namespaceObject.putDisplay)(amount(item, options), item);
-      }
+      action: item => (0,external_kolmafia_namespaceObject.putDisplay)(amount(item, options), item)
     };
   },
   use: options => {
