@@ -61,12 +61,7 @@ const actions: {
     };
   },
   display: (options: Options) => {
-    return {
-      action: (item: Item) => {
-        print(`${item}: ${amount(item, options)}`);
-        putDisplay(amount(item, options), item);
-      },
-    };
+    return { action: (item: Item) => putDisplay(amount(item, options), item) };
   },
   use: (options: Options) => {
     return { action: (item: Item) => use(amount(item, options), item) };
