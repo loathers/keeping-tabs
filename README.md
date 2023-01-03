@@ -65,6 +65,14 @@ All options are supported in all tabs, unless specified. They are white space se
 
 `mall:>1000,<10000`: Mall any item worth more than 1000 and less than 10000.
 
+## Aliasing
+
+Sometimes the names for tabs can get long, and make the right click menu hard to use. In this case, you can provide aliases for your tab actions in your Quest Log notes section. They should be provided in the following format:
+
+`keeping-tabs: alias=tabtitle`
+
+Where `alias` should be a title consisting of only alphanumeric characters, spaces, or `-`, and `tabtitle` should be a valid tab name from the previous section (See "Naming Tabs")
+
 ## Running
 
 After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
