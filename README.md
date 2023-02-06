@@ -5,7 +5,7 @@ This is a script to manage your inventory for the KoLMafia client for the web br
 ## How to install
 
 ```text
-git checkout https://github.com/pstalcup/keeping-tabs.git release
+git checkout https://github.com/loathers/keeping-tabs.git release
 ```
 
 ## How to use
