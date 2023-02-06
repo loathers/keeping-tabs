@@ -104,7 +104,7 @@ function tabString(tab: Tab): string {
   return options.empty() ? title : `${title} with ${options}`;
 }
 
-export function main(args = "closet use mall autosell display kmail fuel"): void {
+export function main(args = "closet use mall autosell display sell kmail fuel"): void {
   cliExecute("refresh inventory");
   const tabs = favoriteTabs();
   const commands: TabTitle[] = args.split(" ").filter(isTabTitle);
