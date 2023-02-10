@@ -1,27 +1,34 @@
-# Keeping Tabs on your Items
+<img src="https://user-images.githubusercontent.com/8014761/217987820-c8d90b0f-8154-4f5d-a175-b9f8ea6b09ae.png" alt="keeping tabs logo; it's sugar free!" style="width: 50%;">
 
-This is a script to manage your inventory for the KoLMafia client for the web browser game Kingdom of Loathing.
+**Keeping Tabs** is a script to help automatically manage your [Kingdom of Loathing](https://www.kingdomofloathing.com/) inventory.
 
-## How to install
+To install, run the following command in an up-to-date [KoLMafia](https://github.com/kolmafia/kolmafia) version:
 
 ```text
-git checkout https://github.com/loathers/keeping-tabs.git release
+git checkout loathers/keeping-tabs release
 ```
 
-## How to use
+# How to Keep your Tabs
 
-Using the native KoL interface, create native tabs to match the specific actions that you want to complete. The names of the tab must match exactly the format of `action:options`.
+Using the native KoL interface, create native tabs whose name matches the specific actions that you want to apply to the items in the tab. The names of the tab must exactly match the format of `action:options`, as noted in our actions summary below.
 
 ## Enabling "favorites"
 
-In order to use this script, you must enable favorites. This can be found by going to the `Options` button in KoL, then clicking the `Inventory` Submenu.
-Under the heading "Right Click", there is a checkbox that says "Add to Favorites (inventory only)". Clicking this check box adds an option when right clicking an item in your inventory.
+In order to use this script, you must enable favorites. This can be found by going to the `Options` button in KoL, then clicking the `Inventory` tab.
 
-Now you can add "favorites" tabs by going to your inventory and clicking "\[+\]" next to "\[recent items\]". After creating the tab, if you need to change its name you can click on the tab and click "rename".
+![image](https://user-images.githubusercontent.com/8014761/217989592-fb1f5ade-e2b4-4c25-8d3e-0e64c64d3d50.png)
+
+Near the bottom of the page, under the heading **Item Right Click Menu Options**, there is a checkbox that says *"Add to Favorites (inventory only)"*. Clicking this check box adds extra options when right clicking an item in your inventory, including the option to add it to various newly named tabs you create.
+
+![image](https://user-images.githubusercontent.com/8014761/217989700-698441f7-d6cd-4c1a-860f-4c49cbf40f26.png)
+
+To add these new tabs, go to your inventory and click "\[+\]" next to "\[recent items\]". After creating the tab, if you need to change the name of the tab, you can simply click on the tab and click "rename".
+
+![image](https://user-images.githubusercontent.com/8014761/217989959-48dcc599-a1b6-46eb-b5b3-399a364915b2.png)
 
 ## Naming Tabs
 
-When naming a tab, you specify what to do with all items in that tab by naming the tab `action:options`.
+Naming a tab involves specifying what to do with all items in that tab by naming the tab `action:options`.
 
 ### Actions
 
@@ -115,7 +122,7 @@ To get a full help documentation, you can run `keeping-tabs help`.
 
 After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
 
-You can also specify which group of actions you want run, and which order you'd like to run them in, for example `keeping-tabs use mall kmail` would, in order, use items in the `use` tab, add all items in the `mall` tab to your mall store, and kmail all items specified in any kmail tabs to the matching users
+Once you have gotten the hang of it and are generally comfortable with the actions Keeping Tabs is taking, one commonly used workflow is to add it to a breakfast or logout script, so that you are constantly cycling out the items in your tabs.
 
 ## Debugging
 
