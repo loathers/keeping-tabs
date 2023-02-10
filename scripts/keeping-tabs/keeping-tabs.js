@@ -1568,12 +1568,147 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// CONCATENATED MODULE: external "kolmafia"
 const external_kolmafia_namespaceObject = require("kolmafia");
+;// CONCATENATED MODULE: ./src/types.ts
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel"];
+function isTabTitle(value) {
+  return ALL_TAB_TITLES.includes(value);
+}
+var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "target"]));
+function isActionOption(value) {
+  return ALL_ACTION_OPTIONS.includes(value);
+}
+;// CONCATENATED MODULE: ./src/options.ts
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Options = /*#__PURE__*/function () {
+  function Options() {
+    _classCallCheck(this, Options);
+
+    _defineProperty(this, "keep", void 0);
+
+    _defineProperty(this, "target", void 0);
+
+    _defineProperty(this, "body", void 0);
+
+    _defineProperty(this, "priceUpperThreshold", void 0);
+
+    _defineProperty(this, "priceLowerThreshold", void 0);
+
+    _defineProperty(this, "default", void 0);
+  }
+
+  _createClass(Options, [{
+    key: "toString",
+    value: function toString() {
+      var optionsStr = [];
+
+      if (this.keep) {
+        optionsStr.push("keep: ".concat(this.keep));
+      }
+
+      if (this.target) {
+        optionsStr.push("target: ".concat(this.target));
+      }
+
+      if (this.body) {
+        optionsStr.push("body: ".concat(this.body));
+      }
+
+      if (this.priceUpperThreshold) {
+        optionsStr.push("price upper threshold: ".concat(this.priceUpperThreshold));
+      }
+
+      if (this.priceLowerThreshold) {
+        optionsStr.push("price lower threshold: ".concat(this.priceLowerThreshold));
+      }
+
+      return optionsStr.join(";");
+    }
+  }, {
+    key: "empty",
+    value: function empty() {
+      return this.toString() === "";
+    }
+  }], [{
+    key: "parse",
+    value: function parse(optionsStr) {
+      var options = new Options();
+
+      var _iterator = _createForOfIteratorHelper(optionsStr),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var optionStr = _step.value;
+          var keep = optionStr.match(/keep(\d+)/);
+
+          if (keep && keep[1]) {
+            options.keep = parseInt(keep[1]);
+            continue;
+          }
+
+          var target = optionStr.match(/#(.*)/);
+
+          if (target && target[1]) {
+            options.target = target[1];
+            continue;
+          }
+
+          var upperThreshold = optionStr.match(/<(\d+)/);
+
+          if (upperThreshold && upperThreshold[1]) {
+            options.priceUpperThreshold = parseInt(upperThreshold[1]);
+            continue;
+          }
+
+          var lowerThreshold = optionStr.match(/>(\d+)/);
+
+          if (lowerThreshold && lowerThreshold[1]) {
+            options.priceUpperThreshold = parseInt(lowerThreshold[1]);
+            continue;
+          }
+
+          var body = optionStr.match(/body=(.*)/);
+
+          if (body && body[1]) {
+            options.body = body[1];
+            continue;
+          }
+
+          if (optionStr.length > 0) {
+            throw "Unsupported Option: ".concat(optionStr);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+
+      return options;
+    }
+  }]);
+
+  return Options;
+}();
 // EXTERNAL MODULE: ./node_modules/libram/node_modules/core-js/modules/es.object.entries.js
 var es_object_entries = __webpack_require__(4875);
 ;// CONCATENATED MODULE: ./node_modules/libram/dist/utils.js
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function utils_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = utils_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || utils_unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
@@ -1581,17 +1716,17 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || utils_unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function utils_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return utils_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return utils_arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return utils_arrayLikeToArray(arr); }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function utils_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function notNull(value) {
   return value !== null;
@@ -1698,7 +1833,7 @@ function setEqual(a, b) {
 function invertMap(map) {
   var returnValue = new Map();
 
-  var _iterator = _createForOfIteratorHelper(map),
+  var _iterator = utils_createForOfIteratorHelper(map),
       _step;
 
   try {
@@ -1715,6 +1850,55 @@ function invertMap(map) {
     _iterator.f();
   }
 
+  return returnValue;
+}
+/**
+ * Creates a Type Guard function for a string union type defined via an array as const.
+ */
+
+function createStringUnionTypeGuardFunction(array) {
+  return function (x) {
+    return array.includes(x);
+  };
+}
+/**
+ * Splits a string by commas while also respecting escaping commas with a backslash
+ * @param str String to split
+ * @returns List of tokens
+ */
+
+function splitByCommasWithEscapes(str) {
+  var returnValue = [];
+  var ignoreNext = false;
+  var currentString = "";
+
+  var _iterator2 = utils_createForOfIteratorHelper(str.split("")),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var char = _step2.value;
+
+      if (char === "\\") {
+        ignoreNext = true;
+      } else {
+        if (char == "," && !ignoreNext) {
+          returnValue.push(currentString.trim());
+          currentString = "";
+        } else {
+          currentString += char;
+        }
+
+        ignoreNext = false;
+      }
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+
+  returnValue.push(currentString.trim());
   return returnValue;
 }
 ;// CONCATENATED MODULE: ./node_modules/libram/dist/Kmail.js
@@ -1740,13 +1924,13 @@ function Kmail_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : type
 
 function Kmail_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function Kmail_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function Kmail_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function Kmail_createClass(Constructor, protoProps, staticProps) { if (protoProps) Kmail_defineProperties(Constructor.prototype, protoProps); if (staticProps) Kmail_defineProperties(Constructor, staticProps); return Constructor; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function Kmail_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -1754,19 +1938,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var Kmail = /*#__PURE__*/function () {
   function Kmail(rawKmail) {
-    _classCallCheck(this, Kmail);
+    Kmail_classCallCheck(this, Kmail);
 
-    _defineProperty(this, "id", void 0);
+    Kmail_defineProperty(this, "id", void 0);
 
-    _defineProperty(this, "date", void 0);
+    Kmail_defineProperty(this, "date", void 0);
 
-    _defineProperty(this, "type", void 0);
+    Kmail_defineProperty(this, "type", void 0);
 
-    _defineProperty(this, "senderId", void 0);
+    Kmail_defineProperty(this, "senderId", void 0);
 
-    _defineProperty(this, "senderName", void 0);
+    Kmail_defineProperty(this, "senderName", void 0);
 
-    _defineProperty(this, "rawMessage", void 0);
+    Kmail_defineProperty(this, "rawMessage", void 0);
 
     var date = new Date(rawKmail.localtime); // Date come from KoL formatted with YY and so will be parsed 19YY, which is wrong.
     // We can safely add 100 because if 19YY was a leap year, 20YY will be too!
@@ -1786,7 +1970,7 @@ var Kmail = /*#__PURE__*/function () {
    */
 
 
-  _createClass(Kmail, [{
+  Kmail_createClass(Kmail, [{
     key: "delete",
     value: function _delete() {
       return Kmail.delete([this]) === 1;
@@ -1983,153 +2167,9 @@ var Kmail = /*#__PURE__*/function () {
 }();
 
 
-;// CONCATENATED MODULE: ./src/types.ts
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel"];
-function isTabTitle(value) {
-  return ALL_TAB_TITLES.includes(value);
-}
-var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "target"]));
-function isActionOption(value) {
-  return ALL_ACTION_OPTIONS.includes(value);
-}
-;// CONCATENATED MODULE: ./src/options.ts
-function options_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = options_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function options_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return options_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return options_arrayLikeToArray(o, minLen); }
-
-function options_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function options_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function options_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function options_createClass(Constructor, protoProps, staticProps) { if (protoProps) options_defineProperties(Constructor.prototype, protoProps); if (staticProps) options_defineProperties(Constructor, staticProps); return Constructor; }
-
-function options_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var Options = /*#__PURE__*/function () {
-  function Options() {
-    options_classCallCheck(this, Options);
-
-    options_defineProperty(this, "keep", void 0);
-
-    options_defineProperty(this, "target", void 0);
-
-    options_defineProperty(this, "body", void 0);
-
-    options_defineProperty(this, "priceUpperThreshold", void 0);
-
-    options_defineProperty(this, "priceLowerThreshold", void 0);
-
-    options_defineProperty(this, "default", void 0);
-  }
-
-  options_createClass(Options, [{
-    key: "toString",
-    value: function toString() {
-      var optionsStr = [];
-
-      if (this.keep) {
-        optionsStr.push("keep: ".concat(this.keep));
-      }
-
-      if (this.target) {
-        optionsStr.push("target: ".concat(this.target));
-      }
-
-      if (this.body) {
-        optionsStr.push("body: ".concat(this.body));
-      }
-
-      if (this.priceUpperThreshold) {
-        optionsStr.push("price upper threshold: ".concat(this.priceUpperThreshold));
-      }
-
-      if (this.priceLowerThreshold) {
-        optionsStr.push("price lower threshold: ".concat(this.priceLowerThreshold));
-      }
-
-      return optionsStr.join(";");
-    }
-  }, {
-    key: "empty",
-    value: function empty() {
-      return this.toString() === "";
-    }
-  }], [{
-    key: "parse",
-    value: function parse(optionsStr) {
-      var options = new Options();
-
-      var _iterator = options_createForOfIteratorHelper(optionsStr),
-          _step;
-
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var optionStr = _step.value;
-          var keep = optionStr.match(/keep(\d+)/);
-
-          if (keep && keep[1]) {
-            options.keep = parseInt(keep[1]);
-            continue;
-          }
-
-          var target = optionStr.match(/#(.*)/);
-
-          if (target && target[1]) {
-            options.target = target[1];
-            continue;
-          }
-
-          var upperThreshold = optionStr.match(/<(\d+)/);
-
-          if (upperThreshold && upperThreshold[1]) {
-            options.priceUpperThreshold = parseInt(upperThreshold[1]);
-            continue;
-          }
-
-          var lowerThreshold = optionStr.match(/>(\d+)/);
-
-          if (lowerThreshold && lowerThreshold[1]) {
-            options.priceUpperThreshold = parseInt(lowerThreshold[1]);
-            continue;
-          }
-
-          var body = optionStr.match(/body=(.*)/);
-
-          if (body && body[1]) {
-            options.body = body[1];
-            continue;
-          }
-
-          if (optionStr.length > 0) {
-            throw "Unsupported Option: ".concat(optionStr);
-          }
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
-
-      return options;
-    }
-  }]);
-
-  return Options;
-}();
-;// CONCATENATED MODULE: ./src/main.ts
-function main_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = main_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function main_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return main_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return main_arrayLikeToArray(o, minLen); }
-
-function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+;// CONCATENATED MODULE: ./src/actions.ts
 
 
-
-
-
-var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
 
 function amount(item, options) {
   if (options.keep) {
@@ -2150,7 +2190,6 @@ function filters(options) {
 
   return item => true;
 }
-
 var actions = {
   mall: options => {
     return {
@@ -2213,6 +2252,18 @@ var actions = {
     };
   }
 };
+;// CONCATENATED MODULE: ./src/main.ts
+function main_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = main_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function main_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return main_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return main_arrayLikeToArray(o, minLen); }
+
+function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
+
+
+
+var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
 
 function items(tabId, type) {
   var tab = (0,external_kolmafia_namespaceObject.visitUrl)("".concat(type, ".php?which=f").concat(tabId));
@@ -2221,37 +2272,69 @@ function items(tabId, type) {
   var match;
 
   while ((match = regexp.exec(tab)) !== null) {
-    var _item = (0,external_kolmafia_namespaceObject.toItem)((0,external_kolmafia_namespaceObject.toInt)(match[1]));
-
-    items.push(_item);
+    var item = (0,external_kolmafia_namespaceObject.toItem)((0,external_kolmafia_namespaceObject.toInt)(match[1]));
+    items.push(item);
   }
 
   return items;
+}
+
+function tabAliases() {
+  var questLogNotesHtml = (0,external_kolmafia_namespaceObject.visitUrl)("questlog.php?which=4");
+  var questLogNotes = questLogNotesHtml.substring(questLogNotesHtml.indexOf(">", questLogNotesHtml.indexOf("<textarea")) + 1, questLogNotesHtml.indexOf("</textarea"));
+  var questLogRegex = /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g;
+  var questLogEntries = questLogNotes.split("\n").map(s => questLogRegex.exec(s)).filter(r => r !== null);
+  var values = questLogEntries.map(r => [r[1], r[2]]);
+  return new Map(values);
 }
 
 function favoriteTabs() {
   // visit the consumables tab to ensure that you get clickable links for
   // all favorite tabs
   var inventory = (0,external_kolmafia_namespaceObject.visitUrl)("inventory.php?which=1");
-  var regexp = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
+  var tabRegex = /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
+  var aliasRegex = /([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?/g;
   var tabs = [];
+  var aliases = tabAliases();
   var match;
+  var aliasMatch;
 
-  while ((match = regexp.exec(inventory)) !== null) {
+  while ((match = tabRegex.exec(inventory)) !== null) {
     var title = match[2];
-    var _options = match[3];
+    var options = match[3];
+    var alias = aliases.get(title);
+    var id = parseInt(match[1]);
 
     if (isTabTitle(title)) {
       tabs.push({
         title: title,
-        id: parseInt(match[1]),
-        options: (_options !== null && _options !== void 0 ? _options : ":").substring(1).split(","),
+        id: id,
+        options: (options !== null && options !== void 0 ? options : ":").substring(1).split(","),
         type: "inventory"
       });
+    } else if (alias && (aliasMatch = aliasRegex.exec(alias))) {
+      var aliasTitle = aliasMatch[1];
+      var _options = aliasMatch[2];
+
+      if (isTabTitle(aliasTitle)) {
+        tabs.push({
+          title: aliasTitle,
+          id: parseInt(match[1]),
+          options: (_options !== null && _options !== void 0 ? _options : ":").substring(1).split(","),
+          type: "inventory",
+          alias: title
+        });
+      }
     }
   }
 
   return tabs;
+}
+
+function tabString(tab) {
+  var options = Options.parse(tab.options);
+  var title = tab.alias ? "".concat(tab.title, " (alias ").concat(tab.alias, ")") : tab.title;
+  return options.empty() ? title : "".concat(title, " with ").concat(options);
 }
 
 function main() {
@@ -2277,17 +2360,10 @@ function main() {
           if (tab.title === command) {
             var _tabForOptions$finali;
 
-            var _options2 = Options.parse(tab.options);
-
-            var tabForOptions = actions[tab.title](_options2);
-
-            if (_options2.empty()) {
-              (0,external_kolmafia_namespaceObject.print)("Running ".concat(tab.title), HIGHLIGHT);
-            } else {
-              (0,external_kolmafia_namespaceObject.print)("Running ".concat(tab.title, " with ").concat(_options2), HIGHLIGHT);
-            }
-
-            items(tab.id, tab.type).filter(filters(_options2)).map(tabForOptions.action);
+            var options = Options.parse(tab.options);
+            var tabForOptions = actions[tab.title](options);
+            (0,external_kolmafia_namespaceObject.print)("Running ".concat(tabString(tab)), HIGHLIGHT);
+            items(tab.id, tab.type).filter(filters(options)).map(tabForOptions.action);
             (_tabForOptions$finali = tabForOptions.finalize) === null || _tabForOptions$finali === void 0 ? void 0 : _tabForOptions$finali.call(tabForOptions);
           }
         }
