@@ -1,16 +1,16 @@
 import {
+  autosell,
+  autosellPrice,
+  cliExecute,
   Item,
   itemAmount,
   mallPrice,
-  putShop,
-  wellStocked,
-  autosellPrice,
-  autosell,
-  putDisplay,
-  use,
   print,
   putCloset,
-  cliExecute,
+  putDisplay,
+  putShop,
+  use,
+  wellStocked,
 } from "kolmafia";
 import { Kmail } from "libram";
 import { Options } from "./options";
