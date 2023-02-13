@@ -1,8 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source
-# code across multiple Node.js versions, and lint the project.
-
-name: Build & Lint
-
+name: CI
 on:
   push:
     branches: [main]
@@ -10,64 +6,55 @@ on:
     branches: [main]
 
 env:
-  # Default version of Node.js for jobs
-  node-version: "12"
+  node-version: "16"
+  path: "mafia"
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: ["12", "14", "16"]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn install --frozen-lockfile
-      - run: yarn run build
-
   lint:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node-version }}
-      - run: yarn install --frozen-lockfile
-      - run: yarn run lint
+      - name: Install modules
+        run: yarn install --immutable
+      - name: Run ESLint & Prettier
+        run: yarn run lint
 
   build:
     runs-on: ubuntu-latest
-    needs: [test, lint]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node-version }}
+      - name: Install modules
+        run: yarn install --immutable
+      - name: Build
+        run: yarn run build
+
+  push:
+    runs-on: ubuntu-latest
+    needs: [lint, build]
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node-version }}
-      - run: |
-          git config user.name "O.A.F."
-          git config user.email "<>"
-      - run: |
-          cp -R mafia mafiafiles
-      - run: yarn install --frozen-lockfile
-      - run: yarn run build
-      - run: |
-          git fetch --all
-          git switch release
-          rm -r scripts/
-          mv KoLmafia/scripts scripts
-      - run: |
-          git add scripts/
-          {
-            git commit -m "Build Mafia files for commit $GITHUB_SHA"
-            git push origin release
-          } || exit 0
+      - name: Install modules
+        run: yarn install --immutable
+      - name: Build
+        run: yarn run build
+
+      - name: Push to Release
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: release
+          FOLDER: ${{ env.path }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}"
+          SKIP_EMPTY_COMMITS: true
