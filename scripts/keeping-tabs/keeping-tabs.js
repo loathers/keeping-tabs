@@ -2338,7 +2338,7 @@ function tabString(tab) {
 }
 
 function main() {
-  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "closet use mall autosell display kmail fuel";
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "closet use mall autosell display sell kmail fuel";
   (0,external_kolmafia_namespaceObject.cliExecute)("refresh inventory");
   var tabs = favoriteTabs();
   var commands = args.split(" ").filter(isTabTitle);
