@@ -1,6 +1,6 @@
 export type InventoryType = "inventory" | "hagnk" | "closet";
 
-const ALL_TAB_TITLES = [
+export const ALL_TAB_TITLES = [
   "mall",
   "display",
   "use",
@@ -9,6 +9,7 @@ const ALL_TAB_TITLES = [
   "sell",
   "closet",
   "fuel",
+  "collection",
 ] as const;
 export type TabTitle = typeof ALL_TAB_TITLES[number];
 export type TabId = number;

@@ -1,3 +1,5 @@
+import { Item } from "kolmafia";
+
 export class Options {
   keep?: number;
   target?: string;
@@ -5,9 +7,11 @@ export class Options {
   priceUpperThreshold?: number;
   priceLowerThreshold?: number;
   default?: string;
+  collectionsMap: Map<string, Item[]> = new Map<string, Item[]>();
 
-  static parse(optionsStr: string[]): Options {
+  static parse(optionsStr: string[], collectionsMap: Map<string, Item[]>): Options {
     const options: Options = new Options();
+    options.collectionsMap = collectionsMap;
     for (const optionStr of optionsStr) {
       const keep = optionStr.match(/keep(\d+)/);
       if (keep && keep[1]) {

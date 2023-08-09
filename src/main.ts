@@ -16,11 +16,12 @@ import {
   visitUrl,
   wellStocked,
 } from "kolmafia";
-import { InventoryType, isTabTitle, Tab, TabId, TabTitle } from "./types";
+import { ALL_TAB_TITLES, InventoryType, isTabTitle, Tab, TabId, TabTitle } from "./types";
 import { Options } from "./options";
 import { actions, filters } from "./actions";
 
 const HIGHLIGHT = isDarkMode() ? "yellow" : "blue";
+const DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection";
 
 function items(tabId: TabId, type: InventoryType): Item[] {
   const tab = visitUrl(`${type}.php?which=f${tabId}`);
@@ -35,20 +36,36 @@ function items(tabId: TabId, type: InventoryType): Item[] {
   return items;
 }
 
-function tabAliases(): Map<string, string> {
+function notesText(): string {
   const questLogNotesHtml = visitUrl("questlog.php?which=4");
-  const questLogNotes = questLogNotesHtml.substring(
+  return questLogNotesHtml.substring(
     questLogNotesHtml.indexOf(">", questLogNotesHtml.indexOf("<textarea")) + 1,
     questLogNotesHtml.indexOf("</textarea")
   );
+}
 
-  const questLogRegex = /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g;
-  const questLogEntries: RegExpExecArray[] = questLogNotes
+function tabAliases(): Map<string, string> {
+  const aliasRegex = /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g;
+  const questLogAliases: RegExpExecArray[] = notesText()
     .split("\n")
-    .map((s) => questLogRegex.exec(s))
+    .map((s) => aliasRegex.exec(s))
     .filter((r) => r !== null) as RegExpExecArray[];
 
-  const values: [string, string][] = questLogEntries.map((r) => [r[1], r[2]]);
+  const values: [string, string][] = questLogAliases.map((r) => [r[1], r[2]]);
+  return new Map(values);
+}
+
+function tabCollections(): Map<string, Item[]> {
+  const collectionRegex = /keeping-tabs-collection: ?'(.*)'=([0-9,]+)/g;
+  const questLogEntries: RegExpExecArray[] = notesText()
+    .split("\n")
+    .map((s) => collectionRegex.exec(s))
+    .filter((r) => r !== null) as RegExpExecArray[];
+
+  const values: [string, Item[]][] = questLogEntries.map((r) => [
+    r[1],
+    r[2].split(",").map((i) => toItem(toInt(i))),
+  ]);
   return new Map(values);
 }
 
@@ -98,20 +115,39 @@ function favoriteTabs(): Tab[] {
 }
 
 function tabString(tab: Tab): string {
-  const options = Options.parse(tab.options);
+  const options = Options.parse(tab.options, new Map());
 
   const title = tab.alias ? `${tab.title} (alias ${tab.alias})` : tab.title;
   return options.empty() ? title : `${title} with ${options}`;
 }
 
-export function main(args = "closet use mall autosell display sell kmail fuel"): void {
+function help(mode: "execute" | "debug") {
+  switch (mode) {
+    case "execute":
+      print(`keeping-tabs help | debug [command] | [...actions]`, HIGHLIGHT);
+      print(`help - print this dialog`);
+      print(`debug - run debugging commands (use "debug help" to see available commands)`);
+      print(`actions`);
+      print(`Any of ${ALL_TAB_TITLES.join(", ")}`);
+      print(` - execute all tabs matching that title`);
+      print(` - default actions: ${DEFAULT_ACTIONS}`);
+      break;
+    case "debug":
+      print(`keeping-tabs debug [command]`, HIGHLIGHT);
+      print(`alias - print all parsed aliases from notes`);
+      print(`collections - print all item target collections from notes`);
+      break;
+  }
+}
+
+function execute(splitArgs: string[]) {
   cliExecute("refresh inventory");
   const tabs = favoriteTabs();
-  const commands: TabTitle[] = args.split(" ").filter(isTabTitle);
+  const commands: TabTitle[] = splitArgs.filter(isTabTitle);
   for (const command of commands) {
     for (const tab of tabs) {
       if (tab.title === command) {
-        const options = Options.parse(tab.options);
+        const options = Options.parse(tab.options, tabCollections());
         const tabForOptions = actions[tab.title](options);
 
         print(`Running ${tabString(tab)}`, HIGHLIGHT);
@@ -120,5 +156,38 @@ export function main(args = "closet use mall autosell display sell kmail fuel"):
         tabForOptions.finalize?.();
       }
     }
+  }
+}
+
+function debug(option: string) {
+  if (option === "alias") {
+    const aliases = tabAliases();
+    print(`Parsed aliases:`, HIGHLIGHT);
+    [...aliases.entries()].forEach((v) => {
+      const [alias, title] = v;
+      print(`Alias ${alias} for action ${title}`, HIGHLIGHT);
+    });
+  } else if (option === "collections") {
+    const collections = tabCollections();
+    print(`Parsed collections:`, HIGHLIGHT);
+    [...collections.entries()].forEach((v) => {
+      const [item, target] = v;
+      print(`Send ${item} to ${target}`);
+    });
+  }
+}
+
+export function main(args = DEFAULT_ACTIONS): void {
+  const splitArgs = args.split(" ");
+  if (splitArgs[0] === "debug") {
+    if (splitArgs.length !== 2 || splitArgs[1] === "help") {
+      help("debug");
+    } else {
+      debug(splitArgs[1]);
+    }
+  } else if (splitArgs[0] === "help") {
+    help("execute");
+  } else {
+    execute(splitArgs);
   }
 }

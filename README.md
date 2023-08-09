@@ -41,6 +41,8 @@ When naming a tab, you specify what to do with all items in that tab by naming t
   * This will Kmail the item to the specified user (all items will be in a batch). A `#target` option must be specified.
 * `fuel`
   * This will convert items in this tab into Asdon Martin fuel
+* `collection`
+  * This will send any items with a matching keeping-tabs-collection directive in your notes to the relevant party
 
 ### Options
 
@@ -55,7 +57,7 @@ All options are supported in all tabs, unless specified. They are white space se
 * `#target`
   * (only supported by `kmail`) to whom to send the kmail. Can be player name or player ID number
 * `body=text`
-  * (only supported by `kmail`) the text of the kmail to send
+  * (only supported by `kmail` and `collection`) the text of the kmail to send
 
 ### Examples
 
@@ -73,11 +75,53 @@ Sometimes the names for tabs can get long, and make the right click menu hard to
 
 Where `alias` should be a title consisting of only alphanumeric characters, spaces, or `-`, and `tabtitle` should be a valid tab name from the previous section (See "Naming Tabs")
 
+You can create an arbitrary amount of aliases by putting multiple rows in your notes:
+
+```
+keeping-tabs: alias1=tabtitle1
+keeping-tabs: alias2=tabtitle2
+```
+
+It is recommended to run `keeping-tabs debug aliases` to verify all of your aliases are parsed correctly.
+
+## Collections Directives
+
+If you want to have a single tab full of items to send to many other players, you can use the `collection` action.
+
+To use it, you must specify the players in your Quest Log notes section in the following format:
+
+`keeping-tabs-collection: 'playername'=itemid`
+
+If you want to specify multiple items, you can instead use:
+
+`keeping-tabs-collection: 'playername'=itemid1,itemid2`
+
+To find the items ID, you can type `js toInt(Item.get("item name here"))` in the KoLMafia CLI
+
+You can create an arbitrary amount of collection directives by putting multiple rows in your notes:
+
+```
+keeping-tabs-collection: 'playername1'=itemid1,itemid2
+keeping-tabs-collection: 'playername2'=itemid3,itemid
+```
+
+Keep in mind that it will only send out items that are in a corresponding `collection` tab, so adding a directive merely specifies where the matching item will go.
+
+It is recommended that you run `keeping-tabs debug collections` after adding a collection to verify it is registered and is the item you expect.
+
 ## Running
+
+To get a full help documentation, you can run `keeping-tabs help`.
 
 After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
 
 You can also specify which group of actions you want run, and which order you'd like to run them in, for example `keeping-tabs use mall kmail` would, in order, use items in the `use` tab, add all items in the `mall` tab to your mall store, and kmail all items specified in any kmail tabs to the matching users
+
+## Debugging
+
+In order to see more information about how keeping-tabs processes your inventory, you can use the `debug` command.
+
+Use `keeping-tabs debug help` to see a full list of available debug commands.
 
 ## TODO
 
