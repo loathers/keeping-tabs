@@ -88,4 +88,32 @@ export const actions: {
       action: (item: Item) => cliExecute(`asdonmartin fuel ${amount(item, options)} ${item}`),
     };
   },
+  collection: (options: Options) => {
+    const kmails = new Map<string, Item[]>();
+    return {
+      action: (item: Item) => {
+        options.collectionsMap.forEach((colItems, target) => {
+          if (colItems.includes(item)) {
+            const items = kmails.get(target);
+            if (items) {
+              kmails.set(target, [...items, item]);
+            } else {
+              kmails.set(target, [item]);
+            }
+          }
+        });
+      },
+      finalize: () => {
+        [...kmails.entries()].map((v) => {
+          const [target, items] = v;
+          const itemQuantities = new Map<Item, number>(items.map((i) => [i, amount(i, options)]));
+          Kmail.send(
+            target,
+            options.body ?? "For your collection, courtesy of keeping-tabs",
+            itemQuantities
+          );
+        });
+      },
+    };
+  },
 };
