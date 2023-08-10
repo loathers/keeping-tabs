@@ -1,4 +1,9 @@
-import { Item } from "kolmafia";
+import { Coinmaster, Item } from "kolmafia";
+
+type OptionsParams = {
+  collections: Map<string, Item[]>;
+  coinmasters: Map<Item, [Coinmaster, Item]>;
+};
 
 export class Options {
   keep?: number;
@@ -7,11 +12,16 @@ export class Options {
   priceUpperThreshold?: number;
   priceLowerThreshold?: number;
   default?: string;
-  collectionsMap: Map<string, Item[]> = new Map<string, Item[]>();
+  best?: boolean;
+  collections: Map<string, Item[]> = new Map();
+  coinmasters: Map<Item, [Coinmaster, Item]> = new Map();
 
-  static parse(optionsStr: string[], collectionsMap: Map<string, Item[]>): Options {
+  static parse(optionsStr: string[], params?: OptionsParams): Options {
     const options: Options = new Options();
-    options.collectionsMap = collectionsMap;
+    if (params) {
+      options.collections = params.collections;
+      options.coinmasters = params.coinmasters;
+    }
     for (const optionStr of optionsStr) {
       const keep = optionStr.match(/keep(\d+)/);
       if (keep && keep[1]) {
@@ -36,6 +46,11 @@ export class Options {
       const body = optionStr.match(/body=(.*)/);
       if (body && body[1]) {
         options.body = body[1];
+        continue;
+      }
+      const best = optionStr.match(/best/);
+      if (best) {
+        options.best = true;
         continue;
       }
       if (optionStr.length > 0) {
