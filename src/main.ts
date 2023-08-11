@@ -45,10 +45,9 @@ function notesText(): string {
 }
 
 function tabAliases(): Map<string, string> {
-  const aliasRegex = /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g;
   const questLogAliases: RegExpExecArray[] = notesText()
     .split("\n")
-    .map((s) => aliasRegex.exec(s))
+    .map((s) => /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g.exec(s))
     .filter((r) => r !== null) as RegExpExecArray[];
 
   const values: [string, string][] = questLogAliases.map((r) => [r[1], r[2]]);
@@ -56,10 +55,9 @@ function tabAliases(): Map<string, string> {
 }
 
 function tabCollections(): Map<string, Item[]> {
-  const collectionRegex = /keeping-tabs-collection: ?'(.*)'=([0-9,]+)/g;
   const questLogEntries: RegExpExecArray[] = notesText()
     .split("\n")
-    .map((s) => collectionRegex.exec(s))
+    .map((s) => /keeping-tabs-collection: ?'(.*)'=([0-9,]+)/g.exec(s))
     .filter((r) => r !== null) as RegExpExecArray[];
 
   const values: [string, Item[]][] = questLogEntries.map((r) => [
