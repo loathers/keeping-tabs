@@ -1569,7 +1569,7 @@ __webpack_require__.d(__webpack_exports__, {
 ;// CONCATENATED MODULE: external "kolmafia"
 const external_kolmafia_namespaceObject = require("kolmafia");
 ;// CONCATENATED MODULE: ./src/types.ts
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel"];
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel", "collection"];
 function isTabTitle(value) {
   return ALL_TAB_TITLES.includes(value);
 }
@@ -1607,6 +1607,8 @@ var Options = /*#__PURE__*/function () {
     _defineProperty(this, "priceLowerThreshold", void 0);
 
     _defineProperty(this, "default", void 0);
+
+    _defineProperty(this, "collectionsMap", new Map());
   }
 
   _createClass(Options, [{
@@ -1643,8 +1645,9 @@ var Options = /*#__PURE__*/function () {
     }
   }], [{
     key: "parse",
-    value: function parse(optionsStr) {
+    value: function parse(optionsStr, collectionsMap) {
       var options = new Options();
+      options.collectionsMap = collectionsMap;
 
       var _iterator = _createForOfIteratorHelper(optionsStr),
           _step;
@@ -2168,6 +2171,26 @@ var Kmail = /*#__PURE__*/function () {
 
 
 ;// CONCATENATED MODULE: ./src/actions.ts
+function actions_slicedToArray(arr, i) { return actions_arrayWithHoles(arr) || actions_iterableToArrayLimit(arr, i) || actions_unsupportedIterableToArray(arr, i) || actions_nonIterableRest(); }
+
+function actions_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function actions_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function actions_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function actions_toConsumableArray(arr) { return actions_arrayWithoutHoles(arr) || actions_iterableToArray(arr) || actions_unsupportedIterableToArray(arr) || actions_nonIterableSpread(); }
+
+function actions_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function actions_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return actions_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return actions_arrayLikeToArray(o, minLen); }
+
+function actions_iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function actions_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return actions_arrayLikeToArray(arr); }
+
+function actions_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
@@ -2250,10 +2273,56 @@ var actions = {
     return {
       action: item => (0,external_kolmafia_namespaceObject.cliExecute)("asdonmartin fuel ".concat(amount(item, options), " ").concat(item))
     };
+  },
+  collection: options => {
+    var kmails = new Map();
+    return {
+      action: item => {
+        options.collectionsMap.forEach((colItems, target) => {
+          if (colItems.includes(item)) {
+            var items = kmails.get(target);
+
+            if (items) {
+              kmails.set(target, [].concat(actions_toConsumableArray(items), [item]));
+            } else {
+              kmails.set(target, [item]);
+            }
+          }
+        });
+      },
+      finalize: () => {
+        actions_toConsumableArray(kmails.entries()).map(v => {
+          var _options$body2;
+
+          var _v = actions_slicedToArray(v, 2),
+              target = _v[0],
+              items = _v[1];
+
+          var itemQuantities = new Map(items.map(i => [i, amount(i, options)]));
+          Kmail.send(target, (_options$body2 = options.body) !== null && _options$body2 !== void 0 ? _options$body2 : "For your collection, courtesy of keeping-tabs", itemQuantities);
+        });
+      }
+    };
   }
 };
 ;// CONCATENATED MODULE: ./src/main.ts
-function main_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = main_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function main_slicedToArray(arr, i) { return main_arrayWithHoles(arr) || main_iterableToArrayLimit(arr, i) || main_unsupportedIterableToArray(arr, i) || main_nonIterableRest(); }
+
+function main_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function main_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function main_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function main_toConsumableArray(arr) { return main_arrayWithoutHoles(arr) || main_iterableToArray(arr) || main_unsupportedIterableToArray(arr) || main_nonIterableSpread(); }
+
+function main_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function main_iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function main_arrayWithoutHoles(arr) { if (Array.isArray(arr)) return main_arrayLikeToArray(arr); }
+
+function main_createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = main_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function main_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return main_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return main_arrayLikeToArray(o, minLen); }
 
@@ -2264,6 +2333,7 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 
 
 var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
+var DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection";
 
 function items(tabId, type) {
   var tab = (0,external_kolmafia_namespaceObject.visitUrl)("".concat(type, ".php?which=f").concat(tabId));
@@ -2279,12 +2349,20 @@ function items(tabId, type) {
   return items;
 }
 
-function tabAliases() {
+function notesText() {
   var questLogNotesHtml = (0,external_kolmafia_namespaceObject.visitUrl)("questlog.php?which=4");
-  var questLogNotes = questLogNotesHtml.substring(questLogNotesHtml.indexOf(">", questLogNotesHtml.indexOf("<textarea")) + 1, questLogNotesHtml.indexOf("</textarea"));
-  var questLogRegex = /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g;
-  var questLogEntries = questLogNotes.split("\n").map(s => questLogRegex.exec(s)).filter(r => r !== null);
-  var values = questLogEntries.map(r => [r[1], r[2]]);
+  return questLogNotesHtml.substring(questLogNotesHtml.indexOf(">", questLogNotesHtml.indexOf("<textarea")) + 1, questLogNotesHtml.indexOf("</textarea"));
+}
+
+function tabAliases() {
+  var questLogAliases = notesText().split("\n").map(s => /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g.exec(s)).filter(r => r !== null);
+  var values = questLogAliases.map(r => [r[1], r[2]]);
+  return new Map(values);
+}
+
+function tabCollections() {
+  var questLogEntries = notesText().split("\n").map(s => /keeping-tabs-collection: ?'(.*)'=([0-9,]+)/g.exec(s)).filter(r => r !== null);
+  var values = questLogEntries.map(r => [r[1], r[2].split(",").map(i => (0,external_kolmafia_namespaceObject.toItem)((0,external_kolmafia_namespaceObject.toInt)(i)))]);
   return new Map(values);
 }
 
@@ -2332,16 +2410,35 @@ function favoriteTabs() {
 }
 
 function tabString(tab) {
-  var options = Options.parse(tab.options);
+  var options = Options.parse(tab.options, new Map());
   var title = tab.alias ? "".concat(tab.title, " (alias ").concat(tab.alias, ")") : tab.title;
   return options.empty() ? title : "".concat(title, " with ").concat(options);
 }
 
-function main() {
-  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "closet use mall autosell display sell kmail fuel";
+function help(mode) {
+  switch (mode) {
+    case "execute":
+      (0,external_kolmafia_namespaceObject.print)("keeping-tabs help | debug [command] | [...actions]", HIGHLIGHT);
+      (0,external_kolmafia_namespaceObject.print)("help - print this dialog");
+      (0,external_kolmafia_namespaceObject.print)("debug - run debugging commands (use \"debug help\" to see available commands)");
+      (0,external_kolmafia_namespaceObject.print)("actions");
+      (0,external_kolmafia_namespaceObject.print)("Any of ".concat(ALL_TAB_TITLES.join(", ")));
+      (0,external_kolmafia_namespaceObject.print)(" - execute all tabs matching that title");
+      (0,external_kolmafia_namespaceObject.print)(" - default actions: ".concat(DEFAULT_ACTIONS));
+      break;
+
+    case "debug":
+      (0,external_kolmafia_namespaceObject.print)("keeping-tabs debug [command]", HIGHLIGHT);
+      (0,external_kolmafia_namespaceObject.print)("alias - print all parsed aliases from notes");
+      (0,external_kolmafia_namespaceObject.print)("collections - print all item target collections from notes");
+      break;
+  }
+}
+
+function execute(splitArgs) {
   (0,external_kolmafia_namespaceObject.cliExecute)("refresh inventory");
   var tabs = favoriteTabs();
-  var commands = args.split(" ").filter(isTabTitle);
+  var commands = splitArgs.filter(isTabTitle);
 
   var _iterator = main_createForOfIteratorHelper(commands),
       _step;
@@ -2360,7 +2457,7 @@ function main() {
           if (tab.title === command) {
             var _tabForOptions$finali;
 
-            var options = Options.parse(tab.options);
+            var options = Options.parse(tab.options, tabCollections());
             var tabForOptions = actions[tab.title](options);
             (0,external_kolmafia_namespaceObject.print)("Running ".concat(tabString(tab)), HIGHLIGHT);
             items(tab.id, tab.type).filter(filters(options)).map(tabForOptions.action);
@@ -2377,6 +2474,49 @@ function main() {
     _iterator.e(err);
   } finally {
     _iterator.f();
+  }
+}
+
+function debug(option) {
+  if (option === "alias") {
+    var aliases = tabAliases();
+    (0,external_kolmafia_namespaceObject.print)("Parsed aliases:", HIGHLIGHT);
+
+    main_toConsumableArray(aliases.entries()).forEach(v => {
+      var _v = main_slicedToArray(v, 2),
+          alias = _v[0],
+          title = _v[1];
+
+      (0,external_kolmafia_namespaceObject.print)("Alias ".concat(alias, " for action ").concat(title), HIGHLIGHT);
+    });
+  } else if (option === "collections") {
+    var collections = tabCollections();
+    (0,external_kolmafia_namespaceObject.print)("Parsed collections:", HIGHLIGHT);
+
+    main_toConsumableArray(collections.entries()).forEach(v => {
+      var _v2 = main_slicedToArray(v, 2),
+          item = _v2[0],
+          target = _v2[1];
+
+      (0,external_kolmafia_namespaceObject.print)("Send ".concat(item, " to ").concat(target));
+    });
+  }
+}
+
+function main() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_ACTIONS;
+  var splitArgs = args.split(" ");
+
+  if (splitArgs[0] === "debug") {
+    if (splitArgs.length !== 2 || splitArgs[1] === "help") {
+      help("debug");
+    } else {
+      debug(splitArgs[1]);
+    }
+  } else if (splitArgs[0] === "help") {
+    help("execute");
+  } else {
+    execute(splitArgs);
   }
 }
 })();
