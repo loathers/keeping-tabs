@@ -7,7 +7,7 @@ on:
 
 env:
   node-version: "16"
-  path: "mafia"
+  path: "KoLmafia"
 
 jobs:
   lint:
