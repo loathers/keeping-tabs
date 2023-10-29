@@ -10,6 +10,7 @@ export const ALL_TAB_TITLES = [
   "closet",
   "fuel",
   "collection",
+  "low",
 ] as const;
 export type TabTitle = typeof ALL_TAB_TITLES[number];
 export type TabId = number;

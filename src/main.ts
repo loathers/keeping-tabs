@@ -21,7 +21,7 @@ import { Options } from "./options";
 import { actions, filters } from "./actions";
 
 const HIGHLIGHT = isDarkMode() ? "yellow" : "blue";
-const DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection";
+const DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection low";
 
 function items(tabId: TabId, type: InventoryType): Item[] {
   const tab = visitUrl(`${type}.php?which=f${tabId}`);

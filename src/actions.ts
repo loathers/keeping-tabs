@@ -71,6 +71,13 @@ export const actions: {
       },
     };
   },
+  low: options => {
+    return {
+      action: item => {
+        putShop(mallPrice(item), 0, amount(item, options), item);
+      }
+    };
+  },
   display: (options: Options) => {
     if (options.stock) {
       return {
