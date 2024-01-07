@@ -46,10 +46,12 @@ export const actions: {
   sell: (options: Options) => {
     return {
       action: (item: Item) => {
-        if (wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2))) {
-          autosell(amount(item, options), item);
-        } else {
-          putShop(0, 0, amount(item, options), item);
+        if (amount(item, options) > 0) {
+          if (wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2))) {
+            autosell(amount(item, options), item);
+          } else {
+            putShop(0, 0, amount(item, options), item);
+          }
         }
       },
     };
