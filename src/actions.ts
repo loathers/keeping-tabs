@@ -71,11 +71,11 @@ export const actions: {
       },
     };
   },
-  low: options => {
+  low: (options) => {
     return {
-      action: item => {
+      action: (item) => {
         putShop(mallPrice(item), 0, amount(item, options), item);
-      }
+      },
     };
   },
   display: (options: Options) => {
