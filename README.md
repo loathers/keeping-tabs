@@ -57,6 +57,8 @@ All options are supported in all tabs, unless specified. They are white space se
 
 * `keepN`
   * Keeps `N` copies of the item after running
+* `stockN`
+  * (only supported by `mall`, `display`, and `closet`). Ensures `N` copies of the item are stocked in the relevant locations, keeps the rest in your inventory
 * `<N`
   * Only performs the given operation on items that have a `mallPrice` that is less than `N`
 * `>N`
