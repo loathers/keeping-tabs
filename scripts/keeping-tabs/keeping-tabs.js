@@ -2222,7 +2222,7 @@ var actions = {
   sell: options => {
     return {
       action: item => {
-        if ((0,external_kolmafia_namespaceObject.wellStocked)("".concat(item), 1000, Math.max(100, (0,external_kolmafia_namespaceObject.autosellPrice)(item) * 2))) {
+        if ((0,external_kolmafia_namespaceObject.wellStocked)("".concat(item), 1000, Math.max(100, (0,external_kolmafia_namespaceObject.autosellPrice)(item) * 2)) || !item.tradeable) {
           (0,external_kolmafia_namespaceObject.autosell)(amount(item, options), item);
         } else {
           (0,external_kolmafia_namespaceObject.putShop)(0, 0, amount(item, options), item);
