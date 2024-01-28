@@ -2,6 +2,7 @@ import { Item } from "kolmafia";
 
 export class Options {
   keep?: number;
+  stock?: number;
   target?: string;
   body?: string;
   priceUpperThreshold?: number;
@@ -16,6 +17,11 @@ export class Options {
       const keep = optionStr.match(/keep(\d+)/);
       if (keep && keep[1]) {
         options.keep = parseInt(keep[1]);
+        continue;
+      }
+      const stock = optionStr.match(/stock(\d+)/);
+      if (stock && stock[1]) {
+        options.stock = parseInt(stock[1]);
         continue;
       }
       const target = optionStr.match(/#(.*)/);
@@ -49,6 +55,9 @@ export class Options {
     const optionsStr = [];
     if (this.keep) {
       optionsStr.push(`keep: ${this.keep}`);
+    }
+    if (this.stock) {
+      optionsStr.push(`stock: ${this.stock}`);
     }
     if (this.target) {
       optionsStr.push(`target: ${this.target}`);

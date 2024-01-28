@@ -2,6 +2,8 @@ import {
   autosell,
   autosellPrice,
   cliExecute,
+  closetAmount,
+  displayAmount,
   Item,
   itemAmount,
   mallPrice,
@@ -9,6 +11,7 @@ import {
   putCloset,
   putDisplay,
   putShop,
+  shopAmount,
   use,
   wellStocked,
 } from "kolmafia";
@@ -41,6 +44,17 @@ export const actions: {
   };
 } = {
   mall: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putShop(
+            0,
+            0,
+            Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)),
+            item
+          ),
+      };
+    }
     return { action: (item: Item) => putShop(0, 0, amount(item, options), item) };
   },
   sell: (options: Options) => {
@@ -55,6 +69,18 @@ export const actions: {
     };
   },
   display: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putDisplay(
+            Math.min(
+              Math.max(0, (options.stock ?? 0) - displayAmount(item)),
+              amount(item, options)
+            ),
+            item
+          ),
+      };
+    }
     return { action: (item: Item) => putDisplay(amount(item, options), item) };
   },
   use: (options: Options) => {
@@ -79,6 +105,15 @@ export const actions: {
     };
   },
   closet: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putDisplay(
+            Math.min(Math.max(0, (options.stock ?? 0) - closetAmount(item)), amount(item, options)),
+            item
+          ),
+      };
+    }
     return {
       action: (item: Item) => putCloset(amount(item, options), item),
     };
