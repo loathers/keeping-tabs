@@ -1,5 +1,15 @@
-import { cliExecute, isAccessible, isDarkMode, print, sellPrice } from "kolmafia";
-import { ALL_TAB_TITLES, isTabTitle, Tab, TabId, TabTitle } from "./types";
+import {
+  cliExecute,
+  isAccessible,
+  isDarkMode,
+  Item,
+  print,
+  sellPrice,
+  toInt,
+  toItem,
+  visitUrl,
+} from "kolmafia";
+import { ALL_TAB_TITLES, InventoryType, isTabTitle, Tab, TabId, TabTitle } from "./types";
 import { Options } from "./options";
 import { actions, filters } from "./actions";
 import { favoriteTabs, parseItems, parseNotes } from "./parse";
@@ -51,51 +61,6 @@ function tabCollections(): Map<string, Item[]> {
     r[2].split(",").map((i) => toItem(toInt(i))),
   ]);
   return new Map(values);
-}
-
-function favoriteTabs(): Tab[] {
-  // visit the consumables tab to ensure that you get clickable links for
-  // all favorite tabs
-  const inventory = visitUrl(`inventory.php?which=1`);
-  const tabRegex =
-    /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
-  const aliasRegex = /([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?/g;
-
-  const tabs: Tab[] = [];
-  const aliases = tabAliases();
-
-  let match;
-  let aliasMatch;
-
-  while ((match = tabRegex.exec(inventory)) !== null) {
-    const title = match[2];
-    const options = match[3];
-    const alias = aliases.get(title);
-    const id = parseInt(match[1]);
-
-    if (isTabTitle(title)) {
-      tabs.push({
-        title,
-        id,
-        options: (options ?? ":").substring(1).split(","),
-        type: "inventory",
-      });
-    } else if (alias && (aliasMatch = aliasRegex.exec(alias))) {
-      const aliasTitle = aliasMatch[1];
-      const options = aliasMatch[2];
-      if (isTabTitle(aliasTitle)) {
-        tabs.push({
-          title: aliasTitle,
-          id: parseInt(match[1]),
-          options: (options ?? ":").substring(1).split(","),
-          type: "inventory",
-          alias: title,
-        });
-      }
-    }
-  }
-
-  return tabs;
 }
 
 function tabString(tab: Tab): string {

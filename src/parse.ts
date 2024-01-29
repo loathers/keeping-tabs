@@ -99,11 +99,16 @@ function parseCoinmasters(): Map<Item, [Coinmaster, Item]> {
     const coin = toItem(toInt(r[1]));
     const item = toItem(toInt(r[2]));
     const coinmaster = Coinmaster.all().find((c) => c.item === coin && sellsItem(c, item));
-    if (isCoinmasterItem(item) && coinmaster) {
-      return [coin, [coinmaster, item]];
-    } else {
-      warn(`${item} is not a coinmaster item`);
+    if (!isCoinmasterItem(item)) {
+      warn(
+        `KoLmafia doesn't believe it can purchase ${item} (${r[2]}) with currency. Maybe you need to update?`
+      );
       return [Item.none, [Coinmaster.none, Item.none]];
+    } else if (!coinmaster) {
+      warn(`${item} (${r[2]}) can't be bought with ${coin} (${r[1]})`);
+      return [Item.none, [Coinmaster.none, Item.none]];
+    } else {
+      return [coin, [coinmaster, item]];
     }
   });
 
