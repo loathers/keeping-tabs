@@ -1569,11 +1569,11 @@ __webpack_require__.d(__webpack_exports__, {
 ;// CONCATENATED MODULE: external "kolmafia"
 const external_kolmafia_namespaceObject = require("kolmafia");
 ;// CONCATENATED MODULE: ./src/types.ts
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel", "collection"];
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel", "collection", "low"];
 function isTabTitle(value) {
   return ALL_TAB_TITLES.includes(value);
 }
-var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "stock", "target"]));
+var ALL_ACTION_OPTIONS = (/* unused pure expression or super */ null && (["keep", "stock", "limit", "price", "target"]));
 function isActionOption(value) {
   return ALL_ACTION_OPTIONS.includes(value);
 }
@@ -1600,6 +1600,10 @@ var Options = /*#__PURE__*/function () {
 
     _defineProperty(this, "stock", void 0);
 
+    _defineProperty(this, "limit", void 0);
+
+    _defineProperty(this, "price", void 0);
+
     _defineProperty(this, "target", void 0);
 
     _defineProperty(this, "body", void 0);
@@ -1624,6 +1628,14 @@ var Options = /*#__PURE__*/function () {
 
       if (this.stock) {
         optionsStr.push("stock: ".concat(this.stock));
+      }
+
+      if (this.limit) {
+        optionsStr.push("limit: ".concat(this.limit));
+      }
+
+      if (this.price) {
+        optionsStr.push("price: ".concat(this.price));
       }
 
       if (this.target) {
@@ -1672,6 +1684,20 @@ var Options = /*#__PURE__*/function () {
 
           if (stock && stock[1]) {
             options.stock = parseInt(stock[1]);
+            continue;
+          }
+
+          var limit = optionStr.match(/limit(\d+)/);
+
+          if (limit && limit[1]) {
+            options.limit = parseInt(limit[1]);
+            continue;
+          }
+
+          var price = optionStr.match(/price(\d+)/);
+
+          if (price && price[1]) {
+            options.price = parseInt(price[1]);
             continue;
           }
 
@@ -2231,15 +2257,19 @@ var actions = {
     if (options.stock) {
       return {
         action: item => {
-          var _options$stock;
+          var _options$price, _options$limit, _options$stock;
 
-          return (0,external_kolmafia_namespaceObject.putShop)(0, 0, Math.min(Math.max(0, ((_options$stock = options.stock) !== null && _options$stock !== void 0 ? _options$stock : 0) - (0,external_kolmafia_namespaceObject.shopAmount)(item)), amount(item, options)), item);
+          return (0,external_kolmafia_namespaceObject.putShop)((_options$price = options.price) !== null && _options$price !== void 0 ? _options$price : 0, (_options$limit = options.limit) !== null && _options$limit !== void 0 ? _options$limit : 0, Math.min(Math.max(0, ((_options$stock = options.stock) !== null && _options$stock !== void 0 ? _options$stock : 0) - (0,external_kolmafia_namespaceObject.shopAmount)(item)), amount(item, options)), item);
         }
       };
     }
 
     return {
-      action: item => (0,external_kolmafia_namespaceObject.putShop)(0, 0, amount(item, options), item)
+      action: item => {
+        var _options$price2, _options$limit2;
+
+        return (0,external_kolmafia_namespaceObject.putShop)((_options$price2 = options.price) !== null && _options$price2 !== void 0 ? _options$price2 : 0, (_options$limit2 = options.limit) !== null && _options$limit2 !== void 0 ? _options$limit2 : 0, amount(item, options), item);
+      }
     };
   },
   sell: options => {
@@ -2248,8 +2278,17 @@ var actions = {
         if ((0,external_kolmafia_namespaceObject.wellStocked)("".concat(item), 1000, Math.max(100, (0,external_kolmafia_namespaceObject.autosellPrice)(item) * 2)) || !item.tradeable) {
           (0,external_kolmafia_namespaceObject.autosell)(amount(item, options), item);
         } else {
-          (0,external_kolmafia_namespaceObject.putShop)(0, 0, amount(item, options), item);
+          var _options$price3, _options$limit3;
+
+          (0,external_kolmafia_namespaceObject.putShop)((_options$price3 = options.price) !== null && _options$price3 !== void 0 ? _options$price3 : 0, (_options$limit3 = options.limit) !== null && _options$limit3 !== void 0 ? _options$limit3 : 0, amount(item, options), item);
         }
+      }
+    };
+  },
+  low: options => {
+    return {
+      action: item => {
+        (0,external_kolmafia_namespaceObject.putShop)((0,external_kolmafia_namespaceObject.mallPrice)(item), 0, amount(item, options), item);
       }
     };
   },
@@ -2376,7 +2415,7 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 
 
 var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
-var DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection";
+var DEFAULT_ACTIONS = "closet use mall autosell display sell kmail fuel collection low";
 
 function items(tabId, type) {
   var tab = (0,external_kolmafia_namespaceObject.visitUrl)("".concat(type, ".php?which=f").concat(tabId));
