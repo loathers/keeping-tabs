@@ -9,6 +9,95 @@ import { set } from "libram";
 const HIGHLIGHT = isDarkMode() ? "yellow" : "blue";
 const DEFAULT_ACTIONS = "closet use coinmaster mall autosell display sell kmail fuel collection";
 
+function items(tabId: TabId, type: InventoryType): Item[] {
+  const tab = visitUrl(`${type}.php?which=f${tabId}`);
+  const regexp = /ic(\d+)/g;
+  const items: Item[] = [];
+
+  let match;
+  while ((match = regexp.exec(tab)) !== null) {
+    const item = toItem(toInt(match[1]));
+    items.push(item);
+  }
+  return items;
+}
+
+function notesText(): string {
+  const questLogNotesHtml = visitUrl("questlog.php?which=4");
+  return questLogNotesHtml.substring(
+    questLogNotesHtml.indexOf(">", questLogNotesHtml.indexOf("<textarea")) + 1,
+    questLogNotesHtml.indexOf("</textarea")
+  );
+}
+
+function tabAliases(): Map<string, string> {
+  const questLogAliases: RegExpExecArray[] = notesText()
+    .split("\n")
+    .map((s) => /keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g.exec(s))
+    .filter((r) => r !== null) as RegExpExecArray[];
+
+  const values: [string, string][] = questLogAliases.map((r) => [r[1], r[2]]);
+  return new Map(values);
+}
+
+function tabCollections(): Map<string, Item[]> {
+  const questLogEntries: RegExpExecArray[] = notesText()
+    .split("\n")
+    .map((s) => /keeping-tabs-collection: ?'(.*)'=([0-9,]+)/g.exec(s))
+    .filter((r) => r !== null) as RegExpExecArray[];
+
+  const values: [string, Item[]][] = questLogEntries.map((r) => [
+    r[1],
+    r[2].split(",").map((i) => toItem(toInt(i))),
+  ]);
+  return new Map(values);
+}
+
+function favoriteTabs(): Tab[] {
+  // visit the consumables tab to ensure that you get clickable links for
+  // all favorite tabs
+  const inventory = visitUrl(`inventory.php?which=1`);
+  const tabRegex =
+    /<a href="inventory.php\?which=f(\d+)">([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?<\/a>/g;
+  const aliasRegex = /([A-Za-z0-9;&]+)(:[A-Za-z0-9;&\-#,<>=]+)?/g;
+
+  const tabs: Tab[] = [];
+  const aliases = tabAliases();
+
+  let match;
+  let aliasMatch;
+
+  while ((match = tabRegex.exec(inventory)) !== null) {
+    const title = match[2];
+    const options = match[3];
+    const alias = aliases.get(title);
+    const id = parseInt(match[1]);
+
+    if (isTabTitle(title)) {
+      tabs.push({
+        title,
+        id,
+        options: (options ?? ":").substring(1).split(","),
+        type: "inventory",
+      });
+    } else if (alias && (aliasMatch = aliasRegex.exec(alias))) {
+      const aliasTitle = aliasMatch[1];
+      const options = aliasMatch[2];
+      if (isTabTitle(aliasTitle)) {
+        tabs.push({
+          title: aliasTitle,
+          id: parseInt(match[1]),
+          options: (options ?? ":").substring(1).split(","),
+          type: "inventory",
+          alias: title,
+        });
+      }
+    }
+  }
+
+  return tabs;
+}
+
 function tabString(tab: Tab): string {
   const options = Options.parse(tab.options);
   const title = tab.alias ? `${tab.title} (alias ${tab.alias})` : tab.title;

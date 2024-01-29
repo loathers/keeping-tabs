@@ -33,11 +33,13 @@ Naming a tab involves specifying what to do with all items in that tab by naming
 ### Actions
 
 * `mall`
-  * This will add the item to your mall store
+  * This will add the item to your mall store at the maximum possible price
+* `low`
+  * This will add the item to your mall store at the 5th lowest price currently listed
 * `autosell`
   * This will autosell the item
 * `sell`
-  * This will either autosell the item or add it to your mall store. It will add it to your mall store only if there are less than 1000 stocked at autosell price
+  * This will either autosell the item or add it to your mall store at the maximum possible price. It will add it to your mall store only if there are less than 1000 stocked at autosell price
 * `use`
   * This will use the item
 * `display`
@@ -59,6 +61,8 @@ All options are supported in all tabs, unless specified. They are white space se
 
 * `keepN`
   * Keeps `N` copies of the item after running
+* `stockN`
+  * (only supported by `mall`, `display`, and `closet`). Ensures `N` copies of the item are stocked in the relevant locations, keeps the rest in your inventory
 * `<N`
   * Only performs the given operation on items that have a `mallPrice` that is less than `N`
 * `>N`
@@ -155,7 +159,8 @@ Use `keeping-tabs debug help` to see a full list of available debug commands.
 
 ## TODO
 
-* [ ] Add more mall options (add at fixed price, add at min price, limit the items for sale)
+* [ ] Add more mall options (add at fixed price, limit the items for sale)
+* [x] Add more mall options (add at min price)
 * [ ] Add confirmation for kmailing, optionally?
 * [x] Add option to keep certain number of items (using format of keepN)
 * [ ] Add `pull` to pull specific items from Hagnks

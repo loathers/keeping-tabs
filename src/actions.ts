@@ -2,6 +2,8 @@ import {
   autosell,
   autosellPrice,
   cliExecute,
+  closetAmount,
+  displayAmount,
   isCoinmasterItem,
   Item,
   itemAmount,
@@ -10,6 +12,7 @@ import {
   putCloset,
   putDisplay,
   putShop,
+  shopAmount,
   use,
   wellStocked,
 } from "kolmafia";
@@ -44,12 +47,26 @@ export const actions: {
   };
 } = {
   mall: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putShop(
+            0,
+            0,
+            Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)),
+            item
+          ),
+      };
+    }
     return { action: (item: Item) => putShop(0, 0, amount(item, options), item) };
   },
   sell: (options: Options) => {
     return {
       action: (item: Item) => {
-        if (wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2))) {
+        if (
+          wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2)) ||
+          !item.tradeable
+        ) {
           autosell(amount(item, options), item);
         } else {
           putShop(0, 0, amount(item, options), item);
@@ -57,7 +74,26 @@ export const actions: {
       },
     };
   },
+  low: (options) => {
+    return {
+      action: (item) => {
+        putShop(mallPrice(item), 0, amount(item, options), item);
+      },
+    };
+  },
   display: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putDisplay(
+            Math.min(
+              Math.max(0, (options.stock ?? 0) - displayAmount(item)),
+              amount(item, options)
+            ),
+            item
+          ),
+      };
+    }
     return { action: (item: Item) => putDisplay(amount(item, options), item) };
   },
   use: (options: Options) => {
@@ -82,6 +118,15 @@ export const actions: {
     };
   },
   closet: (options: Options) => {
+    if (options.stock) {
+      return {
+        action: (item: Item) =>
+          putDisplay(
+            Math.min(Math.max(0, (options.stock ?? 0) - closetAmount(item)), amount(item, options)),
+            item
+          ),
+      };
+    }
     return {
       action: (item: Item) => putCloset(amount(item, options), item),
     };
