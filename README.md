@@ -50,6 +50,8 @@ Naming a tab involves specifying what to do with all items in that tab by naming
   * This will Kmail the item to the specified user (all items will be in a batch). A `#target` option must be specified.
 * `fuel`
   * This will convert items in this tab into Asdon Martin fuel
+* `smash`
+  * This will pulverise the items into nuggets/wads via the "Pulverise" skill.
 * `collection`
   * This will send any items with a matching keeping-tabs-collection directive in your notes to the relevant party
 

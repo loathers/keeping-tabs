@@ -133,6 +133,11 @@ export const actions: {
       action: (item: Item) => cliExecute(`asdonmartin fuel ${amount(item, options)} ${item}`),
     };
   },
+  smash: (options: Options) => {
+    return {
+      action: (item: Item) => cliExecute(`smash ${amount(item, options)} ${item}`),
+    };
+  },
   collection: (options: Options) => {
     const kmails = new Map<string, Item[]>();
     return {
