@@ -8,6 +8,8 @@ type OptionsParams = {
 export class Options {
   keep?: number;
   stock?: number;
+  limit?: number;
+  price?: number;
   target?: string;
   body?: string;
   priceUpperThreshold?: number;
@@ -32,6 +34,16 @@ export class Options {
       const stock = optionStr.match(/stock(\d+)/);
       if (stock && stock[1]) {
         options.stock = parseInt(stock[1]);
+        continue;
+      }
+      const limit = optionStr.match(/limit(\d+)/);
+      if (limit && limit[1]) {
+        options.limit = parseInt(limit[1]);
+        continue;
+      }
+      const price = optionStr.match(/price(\d+)/);
+      if (price && price[1]) {
+        options.price = parseInt(price[1]);
         continue;
       }
       const target = optionStr.match(/#(.*)/);
@@ -73,6 +85,12 @@ export class Options {
     }
     if (this.stock) {
       optionsStr.push(`stock: ${this.stock}`);
+    }
+    if (this.limit) {
+      optionsStr.push(`limit: ${this.limit}`);
+    }
+    if (this.price) {
+      optionsStr.push(`price: ${this.price}`);
     }
     if (this.target) {
       optionsStr.push(`target: ${this.target}`);
