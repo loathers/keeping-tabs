@@ -61,6 +61,10 @@ All options are supported in all tabs, unless specified. They are white space se
   * Keeps `N` copies of the item after running
 * `stockN`
   * (only supported by `mall`, `display`, and `closet`). Ensures `N` copies of the item are stocked in the relevant locations, keeps the rest in your inventory
+* `limitN`
+  * (only supported by `mall` and `sell`) Sets a mall limit of `N` copies per person per day
+* `priceN`
+  * (only supported by `mall` and `sell`) Sets the price for selling in the mall. 
 * `<N`
   * Only performs the given operation on items that have a `mallPrice` that is less than `N`
 * `>N`
@@ -136,7 +140,7 @@ Use `keeping-tabs debug help` to see a full list of available debug commands.
 
 ## TODO
 
-* [ ] Add more mall options (add at fixed price, limit the items for sale)
+* [x] Add more mall options (add at fixed price, limit the items for sale)
 * [x] Add more mall options (add at min price)
 * [ ] Add confirmation for kmailing, optionally?
 * [x] Add option to keep certain number of items (using format of keepN)
