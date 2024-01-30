@@ -66,8 +66,8 @@ function notesText(): string {
   );
 }
 
-function parseAliases(): Map<string, string> {
-  const questLogAliases: RegExpExecArray[] = notesText()
+function parseAliases(notes: string): Map<string, string> {
+  const questLogAliases: RegExpExecArray[] = notes
     .split("\n")
     .map((s) => /^keeping-tabs: ?([A-Za-z0-9\- ]+)=(.*)/g.exec(s))
     .filter((r) => r !== null) as RegExpExecArray[];
@@ -76,8 +76,8 @@ function parseAliases(): Map<string, string> {
   return new Map(values);
 }
 
-function parseCollections(): Map<string, Item[]> {
-  const questLogEntries = notesText()
+function parseCollections(notes: string): Map<string, Item[]> {
+  const questLogEntries = notes
     .split("\n")
     .map((s) => /^keeping-tabs-collection: ?'([^']*)'=(.*)\s*/g.exec(s))
     .filter((r) => r !== null && r.length > 1) as RegExpMatchArray[];
@@ -89,8 +89,8 @@ function parseCollections(): Map<string, Item[]> {
   return new Map(values);
 }
 
-function parseCoinmasters(): Map<Item, [Coinmaster, Item]> {
-  const questLogEntries: RegExpExecArray[] = notesText()
+function parseCoinmasters(notes: string): Map<Item, [Coinmaster, Item]> {
+  const questLogEntries: RegExpExecArray[] = notes
     .split("\n")
     .map((s) => /^keeping-tabs-coinmaster: ?([0-9]+)=([0-9]+)/g.exec(s))
     .filter((r) => r !== null) as RegExpExecArray[];
@@ -120,9 +120,10 @@ export function parseNotes(): {
   collections: Map<string, Item[]>;
   coinmasters: Map<Item, [Coinmaster, Item]>;
 } {
+  const notes = notesText();
   return {
-    aliases: parseAliases(),
-    collections: parseCollections(),
-    coinmasters: parseCoinmasters(),
+    aliases: parseAliases(notes),
+    collections: parseCollections(notes),
+    coinmasters: parseCoinmasters(notes),
   };
 }
