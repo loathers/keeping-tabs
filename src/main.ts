@@ -17,7 +17,8 @@ import { coinmasterBest } from "./coinmaster";
 import { set } from "libram";
 
 const HIGHLIGHT = isDarkMode() ? "yellow" : "blue";
-const DEFAULT_ACTIONS = "closet use coinmaster mall autosell display sell kmail fuel collection";
+const DEFAULT_ACTIONS =
+  "closet use coinmaster mall autosell display sell kmail fuel collection low";
 
 function items(tabId: TabId, type: InventoryType): Item[] {
   const tab = visitUrl(`${type}.php?which=f${tabId}`);
