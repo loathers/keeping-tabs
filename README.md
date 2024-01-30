@@ -63,6 +63,10 @@ All options are supported in all tabs, unless specified. They are white space se
   * Keeps `N` copies of the item after running
 * `stockN`
   * (only supported by `mall`, `display`, and `closet`). Ensures `N` copies of the item are stocked in the relevant locations, keeps the rest in your inventory
+* `limitN`
+  * (only supported by `mall` and `sell`) Sets a mall limit of `N` copies per person per day
+* `priceN`
+  * (only supported by `mall` and `sell`) Sets the price for selling in the mall. 
 * `<N`
   * Only performs the given operation on items that have a `mallPrice` that is less than `N`
 * `>N`
@@ -126,7 +130,7 @@ It is recommended that you run `keeping-tabs debug collections` after adding a c
 
 To get a full help documentation, you can run `keeping-tabs help`.
 
-After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
+After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use mall autosell display sell kmail fuel collection low`
 
 Once you have gotten the hang of it and are generally comfortable with the actions Keeping Tabs is taking, one commonly used workflow is to add it to a breakfast or logout script, so that you are constantly cycling out the items in your tabs.
 
@@ -138,7 +142,7 @@ Use `keeping-tabs debug help` to see a full list of available debug commands.
 
 ## TODO
 
-* [ ] Add more mall options (add at fixed price, limit the items for sale)
+* [x] Add more mall options (add at fixed price, limit the items for sale)
 * [x] Add more mall options (add at min price)
 * [ ] Add confirmation for kmailing, optionally?
 * [x] Add option to keep certain number of items (using format of keepN)

@@ -20,7 +20,7 @@ export function isTabTitle(value: string): value is TabTitle {
   return ALL_TAB_TITLES.includes(value as TabTitle);
 }
 
-const ALL_ACTION_OPTIONS = ["keep", "stock", "target"] as const;
+const ALL_ACTION_OPTIONS = ["keep", "stock", "limit", "price", "target"] as const;
 export type ActionOption = typeof ALL_ACTION_OPTIONS[number];
 
 export function isActionOption(value: string): value is ActionOption {

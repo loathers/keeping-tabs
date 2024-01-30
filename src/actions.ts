@@ -48,14 +48,17 @@ export const actions: {
       return {
         action: (item: Item) =>
           putShop(
-            0,
-            0,
+            options.price ?? 0,
+            options.limit ?? 0,
             Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)),
             item
           ),
       };
     }
-    return { action: (item: Item) => putShop(0, 0, amount(item, options), item) };
+    return {
+      action: (item: Item) =>
+        putShop(options.price ?? 0, options.limit ?? 0, amount(item, options), item),
+    };
   },
   sell: (options: Options) => {
     return {
@@ -66,7 +69,7 @@ export const actions: {
         ) {
           autosell(amount(item, options), item);
         } else {
-          putShop(0, 0, amount(item, options), item);
+          putShop(options.price ?? 0, options.limit ?? 0, amount(item, options), item);
         }
       },
     };
