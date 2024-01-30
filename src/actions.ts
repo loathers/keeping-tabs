@@ -4,6 +4,7 @@ import {
   cliExecute,
   closetAmount,
   displayAmount,
+  isCoinmasterItem,
   Item,
   itemAmount,
   mallPrice,
@@ -15,9 +16,11 @@ import {
   use,
   wellStocked,
 } from "kolmafia";
-import { Kmail } from "libram";
+import { AsdonMartin, Kmail } from "libram";
 import { Options } from "./options";
 import { TabTitle } from "./types";
+import { coinmasterBest, coinmasterBuyAll } from "./coinmaster";
+import { warn } from "./lib";
 
 function amount(item: Item, options: Options) {
   if (options.keep) {
@@ -132,6 +135,13 @@ export const actions: {
     };
   },
   fuel: (options: Options) => {
+    if (!AsdonMartin.installed()) {
+      warn("Asdon martin not installed, skipping fuel action");
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        action: (item: Item) => {},
+      };
+    }
     return {
       action: (item: Item) => cliExecute(`asdonmartin fuel ${amount(item, options)} ${item}`),
     };
@@ -145,7 +155,7 @@ export const actions: {
     const kmails = new Map<string, Item[]>();
     return {
       action: (item: Item) => {
-        options.collectionsMap.forEach((colItems, target) => {
+        options.collections.forEach((colItems, target) => {
           if (colItems.includes(item)) {
             const items = kmails.get(target);
             if (items) {
@@ -160,6 +170,7 @@ export const actions: {
         [...kmails.entries()].map((v) => {
           const [target, items] = v;
           const itemQuantities = new Map<Item, number>(items.map((i) => [i, amount(i, options)]));
+          print(`Sending Kmail to ${target}`);
           Kmail.send(
             target,
             options.body ?? "For your collection, courtesy of keeping-tabs",
@@ -169,4 +180,20 @@ export const actions: {
       },
     };
   },
+  coinmaster: (options: Options) => ({
+    action: (item: Item) => {
+      const targetPair = options.coinmasters.get(item);
+      const availableCoins = amount(item, options);
+      if (targetPair) {
+        const [coinmaster, targetItem] = targetPair;
+        coinmasterBuyAll(coinmaster, targetItem, availableCoins);
+      } else if (options.best) {
+        const best = coinmasterBest(item);
+        if (best && best[1] !== item) {
+          print(`Computed best for ${item} is ${best[1]} from ${best[0]}`);
+          coinmasterBuyAll(...best, availableCoins);
+        }
+      }
+    },
+  }),
 };
