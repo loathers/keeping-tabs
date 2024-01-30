@@ -11,8 +11,9 @@ export const ALL_TAB_TITLES = [
   "fuel",
   "collection",
   "low",
+  "coinmaster",
 ] as const;
-export type TabTitle = typeof ALL_TAB_TITLES[number];
+export type TabTitle = (typeof ALL_TAB_TITLES)[number];
 export type TabId = number;
 
 export function isTabTitle(value: string): value is TabTitle {
@@ -20,7 +21,7 @@ export function isTabTitle(value: string): value is TabTitle {
 }
 
 const ALL_ACTION_OPTIONS = ["keep", "stock", "limit", "price", "target"] as const;
-export type ActionOption = typeof ALL_ACTION_OPTIONS[number];
+export type ActionOption = (typeof ALL_ACTION_OPTIONS)[number];
 
 export function isActionOption(value: string): value is ActionOption {
   return ALL_ACTION_OPTIONS.includes(value as ActionOption);

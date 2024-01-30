@@ -52,6 +52,8 @@ Naming a tab involves specifying what to do with all items in that tab by naming
   * This will convert items in this tab into Asdon Martin fuel
 * `collection`
   * This will send any items with a matching keeping-tabs-collection directive in your notes to the relevant party
+* `coinmaster`
+  * This will trade any items in this tab with a coinmaster. First it will consider any directives specified in your notes (see Coinmaster Directives below). Then, if `best` is specified as an option, it will compute the most cost effective item
 
 ### Options
 
@@ -73,6 +75,8 @@ All options are supported in all tabs, unless specified. They are white space se
   * (only supported by `kmail`) to whom to send the kmail. Can be player name or player ID number
 * `body=text`
   * (only supported by `kmail` and `collection`) the text of the kmail to send
+* `best`
+  * (only supported by `coinmaster`) pick the best (most cost effective) item you can trade the given coin for (include the coin itself if it is tradeable)
 
 ### Examples
 
@@ -111,7 +115,7 @@ If you want to specify multiple items, you can instead use:
 
 `keeping-tabs-collection: 'playername'=itemid1,itemid2`
 
-To find the items ID, you can type `js toInt(Item.get("item name here"))` in the KoLMafia CLI
+To find the items ID, you can type `js Item.get("item name here").id` in the KoLMafia CLI
 
 You can create an arbitrary amount of collection directives by putting multiple rows in your notes:
 
@@ -124,11 +128,30 @@ Keep in mind that it will only send out items that are in a corresponding `colle
 
 It is recommended that you run `keeping-tabs debug collections` after adding a collection to verify it is registered and is the item you expect.
 
+## Coinmaster Directives
+
+For the `coinmaster` action, you can specify exact trades you want to occur
+
+```
+keeping-tabs-coinmaster: coinid=itemid
+```
+
+To find the items ID, you can type `js Item.get("item name here").id` in the KoLMafia CLI
+
+You can create an arbitrary amount of coinmaster directives by putting multiple rows in your notes:
+
+```
+keeping-tabs-coinmaster: coinid1=itemid1
+keeping-tabs-coinmaster: coinid2=itemid2
+```
+
+It is recommended that you run `keeping-tabs debug coinmaster` after adding a collection to verify it is registered and is the item you expect.
+
 ## Running
 
 To get a full help documentation, you can run `keeping-tabs help`.
 
-After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `use mall autosell display kmail`
+After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use coinmaster mall autosell display sell kmail fuel collection low`
 
 Once you have gotten the hang of it and are generally comfortable with the actions Keeping Tabs is taking, one commonly used workflow is to add it to a breakfast or logout script, so that you are constantly cycling out the items in your tabs.
 
