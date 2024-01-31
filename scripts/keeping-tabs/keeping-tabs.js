@@ -3585,6 +3585,7 @@ function help(mode) {
       (0,external_kolmafia_namespaceObject.print)("keeping-tabs debug [command]", HIGHLIGHT);
       (0,external_kolmafia_namespaceObject.print)("alias - print all parsed aliases from notes");
       (0,external_kolmafia_namespaceObject.print)("collections - print all item target collections from notes");
+      (0,external_kolmafia_namespaceObject.print)("coinmasters - print all coinmaster items, target items (and best option based on mall price) from notes");
       break;
   }
 }
