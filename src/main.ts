@@ -85,6 +85,9 @@ function help(mode: "execute" | "debug") {
       print(`keeping-tabs debug [command]`, HIGHLIGHT);
       print(`alias - print all parsed aliases from notes`);
       print(`collections - print all item target collections from notes`);
+      print(
+        `coinmasters - print all coinmaster items, target items (and best option based on mall price) from notes`
+      );
       break;
   }
 }
