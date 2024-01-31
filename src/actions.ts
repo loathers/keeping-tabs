@@ -80,7 +80,7 @@ export const actions: {
   low: (options) => {
     return {
       action: (item) => {
-        putShop(mallPrice(item), 0, amount(item, options), item);
+        putShop(mallPrice(item), options.limit ?? 0, amount(item, options), item);
       },
     };
   },
