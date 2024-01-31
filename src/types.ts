@@ -9,6 +9,7 @@ export const ALL_TAB_TITLES = [
   "sell",
   "closet",
   "fuel",
+  "smash",
   "collection",
   "low",
   "coinmaster",
