@@ -2967,7 +2967,8 @@ var actions = {
   low: options => {
     return {
       action: item => {
-        (0,external_kolmafia_namespaceObject.putShop)((0,external_kolmafia_namespaceObject.mallPrice)(item), 0, amount(item, options), item);
+        var _options$limit4;
+        (0,external_kolmafia_namespaceObject.putShop)((0,external_kolmafia_namespaceObject.mallPrice)(item), (_options$limit4 = options.limit) !== null && _options$limit4 !== void 0 ? _options$limit4 : 0, amount(item, options), item);
       }
     };
   },
