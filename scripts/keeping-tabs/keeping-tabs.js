@@ -1925,7 +1925,7 @@ __webpack_require__.d(__webpack_exports__, {
 ;// CONCATENATED MODULE: external "kolmafia"
 const external_kolmafia_namespaceObject = require("kolmafia");
 ;// CONCATENATED MODULE: ./src/types.ts
-var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel", "collection", "low", "coinmaster"];
+var ALL_TAB_TITLES = ["mall", "display", "use", "autosell", "kmail", "sell", "closet", "fuel", "smash", "collection", "low", "coinmaster"];
 function isTabTitle(value) {
   return ALL_TAB_TITLES.includes(value);
 }
@@ -3033,6 +3033,11 @@ var actions = {
     }
     return {
       action: item => (0,external_kolmafia_namespaceObject.cliExecute)("asdonmartin fuel ".concat(amount(item, options), " ").concat(item))
+    };
+  },
+  smash: options => {
+    return {
+      action: item => (0,external_kolmafia_namespaceObject.cliExecute)("smash ".concat(amount(item, options), " ").concat(item))
     };
   },
   collection: options => {
