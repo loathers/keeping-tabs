@@ -145,7 +145,7 @@ keeping-tabs-coinmaster: coinid1=itemid1
 keeping-tabs-coinmaster: coinid2=itemid2
 ```
 
-It is recommended that you run `keeping-tabs debug coinmaster` after adding a collection to verify it is registered and is the item you expect.
+It is recommended that you run `keeping-tabs debug coinmasters` after adding a collection to verify it is registered and is the item you expect.
 
 ## Running
 
