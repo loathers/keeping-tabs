@@ -40,6 +40,8 @@ Naming a tab involves specifying what to do with all items in that tab by naming
   * This will autosell the item
 * `sell`
   * This will either autosell the item or add it to your mall store at the maximum possible price. It will add it to your mall store only if there are less than 1000 stocked at autosell price
+* `hawk`
+  * Combination of sell and low. This will either autosell the item or add it to your mall store at the 5th lowest price currently listed. It will add it to your mall store only if there are less than 1000 stocked at autosell price
 * `use`
   * This will use the item
 * `display`
@@ -153,7 +155,7 @@ It is recommended that you run `keeping-tabs debug coinmasters` after adding a c
 
 To get a full help documentation, you can run `keeping-tabs help`.
 
-After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use coinmaster mall autosell display sell kmail fuel collection low`
+After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use coinmaster mall autosell display sell kmail fuel collection low hawk`
 
 Once you have gotten the hang of it and are generally comfortable with the actions Keeping Tabs is taking, one commonly used workflow is to add it to a breakfast or logout script, so that you are constantly cycling out the items in your tabs.
 

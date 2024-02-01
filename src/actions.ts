@@ -77,6 +77,20 @@ export const actions: {
       },
     };
   },
+  hawk: (options: Options) => {
+    return {
+      action: (item: Item) => {
+        if (
+          wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2)) ||
+          !item.tradeable
+        ) {
+          autosell(amount(item, options), item);
+        } else {
+          putShop(mallPrice(item), options.limit ?? 0, amount(item, options), item);
+        }
+      },
+    };
+  },
   low: (options) => {
     return {
       action: (item) => {
