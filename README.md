@@ -153,7 +153,7 @@ It is recommended that you run `keeping-tabs debug coinmaster` after adding a co
 
 To get a full help documentation, you can run `keeping-tabs help`.
 
-After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use coinmaster mall autosell display sell kmail fuel collection low`
+After adding your items to the favorite tabs in the game, just run hte command `keeping-tabs` on the command line. By default, it will run the command groups in the order `closet use smash coinmaster mall autosell display sell kmail fuel collection low`
 
 Once you have gotten the hang of it and are generally comfortable with the actions Keeping Tabs is taking, one commonly used workflow is to add it to a breakfast or logout script, so that you are constantly cycling out the items in your tabs.
 
