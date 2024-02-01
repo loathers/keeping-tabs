@@ -66,7 +66,7 @@ All options are supported in all tabs, unless specified. They are white space se
 * `stockN`
   * (only supported by `mall`, `display`, and `closet`). Ensures `N` copies of the item are stocked in the relevant locations, keeps the rest in your inventory
 * `limitN`
-  * (only supported by `mall` and `sell`) Sets a mall limit of `N` copies per person per day
+  * (only supported by `mall`, `sell`, and `low`) Sets a mall limit of `N` copies per person per day
 * `priceN`
   * (only supported by `mall` and `sell`) Sets the price for selling in the mall. 
 * `<N`
@@ -147,7 +147,7 @@ keeping-tabs-coinmaster: coinid1=itemid1
 keeping-tabs-coinmaster: coinid2=itemid2
 ```
 
-It is recommended that you run `keeping-tabs debug coinmaster` after adding a collection to verify it is registered and is the item you expect.
+It is recommended that you run `keeping-tabs debug coinmasters` after adding a collection to verify it is registered and is the item you expect.
 
 ## Running
 
