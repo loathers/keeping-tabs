@@ -15,7 +15,15 @@ import {
   use,
   wellStocked,
 } from "kolmafia";
-import { AsdonMartin, bulkPutShop, Kmail, sumNumbers } from "libram";
+import {
+  AsdonMartin,
+  bulkAutosell,
+  bulkPutCloset,
+  bulkPutDisplay,
+  bulkPutShop,
+  Kmail,
+  sumNumbers
+} from "libram";
 import { Options } from "./options";
 import { TabTitle } from "./types";
 import { coinmasterBest, coinmasterBuyAll } from "./coinmaster";
@@ -39,71 +47,81 @@ export function filters(options: Options): (item: Item) => boolean {
   return (item: Item) => true;
 }
 
-export const actions: {
-  [T in TabTitle]: (options: Options) => {
-    action: (item: Item) => void;
-    finalize?: () => void;
-  };
-} = {
-  mall: (options: Options) => {
+function makeBulk(
+  bulkOperation: (items: Map<Item, number>) => boolean,
+  baseAmount?: (item: Item) => number
+) {
+  const items = new Map<Item, number>();
+
+  return (options: Options) => ({
+    action: (item: Item) =>
+      items.set(
+        item,
+        baseAmount && options.stock
+          ? Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
+          : amount(item, options)
+      ),
+    finalize: () => {
+      bulkOperation(items);
+    },
+  });
+}
+
+function makeMall(mallOptions?: { price?: (item: Item) => number; stock?: boolean }) {
+  return (options: Options) => {
     const mallItems = new Map<Item, { quantity?: number; limit?: number; price: number }>();
-    const quantity = options.stock
-      ? (item: Item) =>
-          Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
-      : (item: Item) => amount(item, options);
+    const quantity =
+      options.stock && mallOptions?.stock
+        ? (item: Item) =>
+            Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
+        : (item: Item) => amount(item, options);
 
     return {
       action: (item: Item) =>
         mallItems.set(item, {
           quantity: quantity(item),
           limit: options.limit,
-          price: options.price ?? 0,
+          price: mallOptions?.price ? mallOptions.price(item) : options.price ?? 0,
         }),
       finalize: () => bulkPutShop(mallItems),
     };
-  },
+  };
+}
+
+export const actions: {
+  [T in TabTitle]: (options: Options) => {
+    action: (item: Item) => void;
+    finalize?: () => void;
+  };
+} = {
+  mall: makeMall({ stock: true }),
   sell: (options: Options) => {
+    const mallAction = makeMall()(options);
+    const autosellAction = makeBulk(bulkAutosell)(options);
+
     return {
       action: (item: Item) => {
         if (
           wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2)) ||
           !item.tradeable
         ) {
-          autosell(amount(item, options), item);
+          autosellAction.action(item);
         } else {
-          putShop(options.price ?? 0, options.limit ?? 0, amount(item, options), item);
+          mallAction.action(item);
         }
       },
-    };
-  },
-  low: (options) => {
-    return {
-      action: (item) => {
-        putShop(mallPrice(item), options.limit ?? 0, amount(item, options), item);
+      finalize: () => {
+        mallAction.finalize();
+        autosellAction.finalize();
       },
     };
   },
-  display: (options: Options) => {
-    if (options.stock) {
-      return {
-        action: (item: Item) =>
-          putDisplay(
-            Math.min(
-              Math.max(0, (options.stock ?? 0) - displayAmount(item)),
-              amount(item, options)
-            ),
-            item
-          ),
-      };
-    }
-    return { action: (item: Item) => putDisplay(amount(item, options), item) };
-  },
+  low: makeMall({ price: mallPrice }),
+  display: makeBulk(bulkPutDisplay, displayAmount),
   use: (options: Options) => {
     return { action: (item: Item) => use(amount(item, options), item) };
   },
-  autosell: (options: Options) => {
-    return { action: (item: Item) => autosell(amount(item, options), item) };
-  },
+  autosell: makeBulk(bulkAutosell),
   kmail: (options: Options) => {
     const items: Item[] = [];
     return {
@@ -120,20 +138,7 @@ export const actions: {
       },
     };
   },
-  closet: (options: Options) => {
-    if (options.stock) {
-      return {
-        action: (item: Item) =>
-          putDisplay(
-            Math.min(Math.max(0, (options.stock ?? 0) - closetAmount(item)), amount(item, options)),
-            item
-          ),
-      };
-    }
-    return {
-      action: (item: Item) => putCloset(amount(item, options), item),
-    };
-  },
+  closet: makeBulk(bulkPutCloset, closetAmount),
   fuel: (options: Options) => {
     if (!AsdonMartin.installed()) {
       warn("Asdon martin not installed, skipping fuel action");
