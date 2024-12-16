@@ -16,7 +16,7 @@ import {
   use,
   wellStocked,
 } from "kolmafia";
-import { AsdonMartin, Kmail } from "libram";
+import { AsdonMartin, Kmail, sumNumbers } from "libram";
 import { Options } from "./options";
 import { TabTitle } from "./types";
 import { coinmasterBest, coinmasterBuyAll } from "./coinmaster";
@@ -116,7 +116,8 @@ export const actions: {
         }
         const itemQuantities = new Map<Item, number>(items.map((i) => [i, amount(i, options)]));
         print(`Sending Kmail to ${target}`);
-        Kmail.send(target, options.body ?? "", itemQuantities);
+        if (sumNumbers([...itemQuantities.values()]) > 0)
+          Kmail.send(target, options.body ?? "", itemQuantities);
       },
     };
   },
