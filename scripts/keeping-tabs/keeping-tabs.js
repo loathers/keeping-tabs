@@ -3545,7 +3545,7 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 
 
 var HIGHLIGHT = (0,external_kolmafia_namespaceObject.isDarkMode)() ? "yellow" : "blue";
-var DEFAULT_ACTIONS = "closet use coinmaster mall autosell display sell kmail fuel collection low";
+var DEFAULT_ACTIONS = "closet use smash coinmaster mall autosell display sell kmail fuel collection low";
 function items(tabId, type) {
   var tab = visitUrl("".concat(type, ".php?which=f").concat(tabId));
   var regexp = /ic(\d+)/g;
