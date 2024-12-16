@@ -4,7 +4,6 @@ import {
   cliExecute,
   closetAmount,
   displayAmount,
-  isCoinmasterItem,
   Item,
   itemAmount,
   mallPrice,
@@ -16,7 +15,7 @@ import {
   use,
   wellStocked,
 } from "kolmafia";
-import { AsdonMartin, Kmail, sumNumbers } from "libram";
+import { AsdonMartin, bulkPutShop, Kmail, sumNumbers } from "libram";
 import { Options } from "./options";
 import { TabTitle } from "./types";
 import { coinmasterBest, coinmasterBuyAll } from "./coinmaster";
@@ -47,20 +46,17 @@ export const actions: {
   };
 } = {
   mall: (options: Options) => {
-    if (options.stock) {
-      return {
-        action: (item: Item) =>
-          putShop(
-            options.price ?? 0,
-            options.limit ?? 0,
-            Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)),
-            item
-          ),
-      };
-    }
+    const mallItems = new Map<Item, { quantity?: number; limit?: number; price: number }>
+    const quantity = options.stock ? (item: Item) =>  Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)) :  (item: Item) => amount(item, options)
+
     return {
       action: (item: Item) =>
-        putShop(options.price ?? 0, options.limit ?? 0, amount(item, options), item),
+        mallItems.set(item, { 
+          quantity: quantity(item),
+          limit: options.limit, 
+          price: options.price ?? 0
+        }),
+        finalize: () => bulkPutShop(mallItems)
     };
   },
   sell: (options: Options) => {
