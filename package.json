@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "core-js": "^3.16.4",
-    "kolmafia": "^3.4.0",
+    "kolmafia": "^5.28165.0",
     "libram": "^0.9.24"
   },
   "author": "ReverKiller",

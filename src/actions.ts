@@ -46,17 +46,20 @@ export const actions: {
   };
 } = {
   mall: (options: Options) => {
-    const mallItems = new Map<Item, { quantity?: number; limit?: number; price: number }>
-    const quantity = options.stock ? (item: Item) =>  Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options)) :  (item: Item) => amount(item, options)
+    const mallItems = new Map<Item, { quantity?: number; limit?: number; price: number }>();
+    const quantity = options.stock
+      ? (item: Item) =>
+          Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
+      : (item: Item) => amount(item, options);
 
     return {
       action: (item: Item) =>
-        mallItems.set(item, { 
+        mallItems.set(item, {
           quantity: quantity(item),
-          limit: options.limit, 
-          price: options.price ?? 0
+          limit: options.limit,
+          price: options.price ?? 0,
         }),
-        finalize: () => bulkPutShop(mallItems)
+      finalize: () => bulkPutShop(mallItems),
     };
   },
   sell: (options: Options) => {
