@@ -22,7 +22,7 @@ import {
   bulkPutDisplay,
   bulkPutShop,
   Kmail,
-  sumNumbers
+  sumNumbers,
 } from "libram";
 import { Options } from "./options";
 import { TabTitle } from "./types";
