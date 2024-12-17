@@ -8,9 +8,6 @@ import {
   itemAmount,
   mallPrice,
   print,
-  putCloset,
-  putDisplay,
-  putShop,
   shopAmount,
   use,
   wellStocked,
@@ -21,6 +18,7 @@ import {
   bulkPutCloset,
   bulkPutDisplay,
   bulkPutShop,
+  clamp,
   Kmail,
   sumNumbers,
 } from "libram";
@@ -31,7 +29,7 @@ import { warn } from "./lib";
 
 function amount(item: Item, options: Options) {
   if (options.keep) {
-    return Math.max(0, itemAmount(item) - options.keep);
+    return clamp(itemAmount(item) - options.keep, 0, itemAmount(item));
   } else {
     return itemAmount(item);
   }
@@ -58,7 +56,7 @@ function makeBulk(
       items.set(
         item,
         baseAmount && options.stock
-          ? Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
+          ? clamp((options.stock ?? 0) - baseAmount(item), 0, amount(item, options))
           : amount(item, options)
       ),
     finalize: () => {
@@ -72,8 +70,7 @@ function makeMall(mallOptions?: { price?: (item: Item) => number; stock?: boolea
     const mallItems = new Map<Item, { quantity?: number; limit?: number; price: number }>();
     const quantity =
       options.stock && mallOptions?.stock
-        ? (item: Item) =>
-            Math.min(Math.max(0, (options.stock ?? 0) - shopAmount(item)), amount(item, options))
+        ? (item: Item) => clamp((options.stock ?? 0) - shopAmount(item), 0, amount(item, options))
         : (item: Item) => amount(item, options);
 
     return {
@@ -102,7 +99,11 @@ export const actions: {
     return {
       action: (item: Item) => {
         if (
-          wellStocked(`${item}`, 1000, Math.max(100, autosellPrice(item) * 2)) ||
+          wellStocked(
+            `${item}`,
+            1000,
+            clamp(autosellPrice(item) * 2, 100, autosellPrice(item) * 2)
+          ) ||
           !item.tradeable
         ) {
           autosellAction.action(item);
