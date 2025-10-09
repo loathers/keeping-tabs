@@ -11,7 +11,7 @@ import {
 } from "kolmafia";
 import { ALL_TAB_TITLES, InventoryType, isTabTitle, Tab, TabId, TabTitle } from "./types";
 import { Options } from "./options";
-import { actions, filters } from "./actions";
+import { actions, applyFilters } from "./actions";
 import { favoriteTabs, parseItems, parseNotes } from "./parse";
 import { coinmasterBest } from "./coinmaster";
 import { set } from "libram";
@@ -106,7 +106,8 @@ function execute(splitArgs: string[]) {
 
         print(`Running ${tabString(tab)}`, HIGHLIGHT);
 
-        parseItems(tab.id, tab.type).filter(filters(options)).map(tabForOptions.action);
+        const parsedItems = parseItems(tab.id, tab.type)
+        applyFilters(parsedItems, options).map(tabForOptions.action);
         tabForOptions.finalize?.();
       }
     }
@@ -133,16 +134,14 @@ function debug(option: string) {
     [...parsedNotes.coinmasters.entries()].forEach((v) => {
       const [coin, [coinmaster, target]] = v;
       print(
-        `Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${
-          isAccessible(coinmaster) ? "" : "(currently unaccessible)"
+        `Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${isAccessible(coinmaster) ? "" : "(currently unaccessible)"
         }`
       );
       const best = coinmasterBest(coin);
       if (best) {
         const [coinmaster, target] = best;
         print(
-          `Best: Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${
-            isAccessible(coinmaster) ? "" : "(currently unaccessible)"
+          `Best: Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${isAccessible(coinmaster) ? "" : "(currently unaccessible)"
           }`
         );
       }
