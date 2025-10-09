@@ -106,7 +106,7 @@ function execute(splitArgs: string[]) {
 
         print(`Running ${tabString(tab)}`, HIGHLIGHT);
 
-        const parsedItems = parseItems(tab.id, tab.type)
+        const parsedItems = parseItems(tab.id, tab.type);
         applyFilters(parsedItems, options).map(tabForOptions.action);
         tabForOptions.finalize?.();
       }
@@ -134,14 +134,16 @@ function debug(option: string) {
     [...parsedNotes.coinmasters.entries()].forEach((v) => {
       const [coin, [coinmaster, target]] = v;
       print(
-        `Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${isAccessible(coinmaster) ? "" : "(currently unaccessible)"
+        `Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${
+          isAccessible(coinmaster) ? "" : "(currently unaccessible)"
         }`
       );
       const best = coinmasterBest(coin);
       if (best) {
         const [coinmaster, target] = best;
         print(
-          `Best: Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${isAccessible(coinmaster) ? "" : "(currently unaccessible)"
+          `Best: Buy ${target} from ${coinmaster} using ${sellPrice(coinmaster, target)} ${coin} ${
+            isAccessible(coinmaster) ? "" : "(currently unaccessible)"
           }`
         );
       }

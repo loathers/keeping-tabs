@@ -46,11 +46,11 @@ export function applyFilters(items: Item[], options: Options): Item[] {
   }
 
   // Amount to be operated over > 0
-  filterFunctions.push((item: Item) => amount(item, options) > 0)
+  filterFunctions.push((item: Item) => amount(item, options) > 0);
 
   let filteredItems = items;
-  for (let filter of filterFunctions) {
-    filteredItems = filteredItems.filter(filter)
+  for (const filter of filterFunctions) {
+    filteredItems = filteredItems.filter(filter);
   }
 
   return filteredItems;
