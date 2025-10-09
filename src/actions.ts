@@ -156,7 +156,7 @@ export const actions: {
       warn("Asdon martin not installed, skipping fuel action");
       return {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        action: (item: Item) => { },
+        action: (item: Item) => {},
       };
     }
     return {
