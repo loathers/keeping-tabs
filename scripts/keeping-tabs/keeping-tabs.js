@@ -2926,14 +2926,29 @@ function amount(item, options) {
     return (0,external_kolmafia_namespaceObject.itemAmount)(item);
   }
 }
-function filters(options) {
-  if (options.priceUpperThreshold && options.priceLowerThreshold) {
-    var between = (x, lower, upper) => lower < x && x < upper;
+function applyFilters(items, options) {
+  var filterFunctions = [];
+
+  // Mallprice below upper thresh
+  if (options.priceUpperThreshold) {
     var upperThreshold = options.priceUpperThreshold;
-    var lowerThreshold = options.priceLowerThreshold;
-    return item => between((0,external_kolmafia_namespaceObject.mallPrice)(item), lowerThreshold, upperThreshold);
+    filterFunctions.push(item => (0,external_kolmafia_namespaceObject.mallPrice)(item) < upperThreshold);
   }
-  return item => true;
+
+  // Mallprice below lower thresh
+  if (options.priceLowerThreshold) {
+    var lowerThreshold = options.priceLowerThreshold;
+    filterFunctions.push(item => (0,external_kolmafia_namespaceObject.mallPrice)(item) > lowerThreshold);
+  }
+
+  // Amount to be operated over > 0
+  filterFunctions.push(item => amount(item, options) > 0);
+  var filteredItems = items;
+  for (var _i = 0, _filterFunctions = filterFunctions; _i < _filterFunctions.length; _i++) {
+    var filter = _filterFunctions[_i];
+    filteredItems = filteredItems.filter(filter);
+  }
+  return filteredItems;
 }
 var actions = {
   mall: options => {
@@ -3615,7 +3630,8 @@ function execute(splitArgs) {
             var options = Options.parse(tab.options, parsedNotes);
             var tabForOptions = actions[tab.title](options);
             (0,external_kolmafia_namespaceObject.print)("Running ".concat(tabString(tab)), HIGHLIGHT);
-            parseItems(tab.id, tab.type).filter(filters(options)).map(tabForOptions.action);
+            var parsedItems = parseItems(tab.id, tab.type);
+            applyFilters(parsedItems, options).map(tabForOptions.action);
             (_tabForOptions$finali = tabForOptions.finalize) === null || _tabForOptions$finali === void 0 ? void 0 : _tabForOptions$finali.call(tabForOptions);
           }
         }
