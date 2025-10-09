@@ -30,14 +30,30 @@ function amount(item: Item, options: Options) {
   }
 }
 
-export function filters(options: Options): (item: Item) => boolean {
-  if (options.priceUpperThreshold && options.priceLowerThreshold) {
-    const between = (x: number, lower: number, upper: number) => lower < x && x < upper;
+export function applyFilters(items: Item[], options: Options): Item[] {
+  const filterFunctions = [];
+
+  // Mallprice below upper thresh
+  if (options.priceUpperThreshold) {
     const upperThreshold = options.priceUpperThreshold;
-    const lowerThreshold = options.priceLowerThreshold;
-    return (item: Item) => between(mallPrice(item), lowerThreshold, upperThreshold);
+    filterFunctions.push((item: Item) => mallPrice(item) < upperThreshold);
   }
-  return (item: Item) => true;
+
+  // Mallprice below lower thresh
+  if (options.priceLowerThreshold) {
+    const lowerThreshold = options.priceLowerThreshold;
+    filterFunctions.push((item: Item) => mallPrice(item) > lowerThreshold);
+  }
+
+  // Amount to be operated over > 0
+  filterFunctions.push((item: Item) => amount(item, options) > 0);
+
+  let filteredItems = items;
+  for (const filter of filterFunctions) {
+    filteredItems = filteredItems.filter(filter);
+  }
+
+  return filteredItems;
 }
 
 export const actions: {
